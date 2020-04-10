@@ -1,0 +1,2 @@
+rootProject.name='Safe Passage India'
+include ':app'
