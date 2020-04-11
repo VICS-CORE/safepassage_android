@@ -26,8 +26,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 
-import org.covid19india.android.passissuer.MainActivity;
-
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
@@ -75,11 +73,10 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            if(charSequence.length()==6){
+            if (charSequence.length() == 6) {
                 verifyButton.setVisibility(View.VISIBLE);
                 otpEdit.onEditorAction(EditorInfo.IME_ACTION_DONE);
-            }
-            else{
+            } else {
                 verifyButton.setVisibility(View.GONE);
             }
         }
@@ -94,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
             sendProgress.setVisibility(View.GONE);
+            button.setVisibility(View.VISIBLE);
             Log.d(TAG, "Authorization verified");
             signInWithPhoneAuthCredential(phoneAuthCredential);
         }
@@ -101,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
             sendProgress.setVisibility(View.GONE);
+            button.setVisibility(View.VISIBLE);
             Log.d(TAG, "Authorization failed", e);
             if (e instanceof FirebaseAuthInvalidCredentialsException) {
                 // Invalid request
@@ -113,7 +112,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }).show();
             } else if (e instanceof FirebaseTooManyRequestsException) {
-                sendProgress.setVisibility(View.GONE);
                 // The SMS quota for the project has been exceeded
                 // ...
                 Log.d(TAG, "SMS quota for the project is exceeded");
@@ -134,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
             // now need to ask the user to enter the code and then construct a credential
             // by combining the code with a verification ID.
             sendProgress.setVisibility(View.GONE);
+            button.setVisibility(View.VISIBLE);
             Log.d(TAG, "onCodeSent:" + verificationId);
             final Snackbar snackbar = Snackbar.make(layout, "OTP sent to your Mobile number", Snackbar.LENGTH_LONG);
             snackbar.setAction("Dismiss", new View.OnClickListener() {
@@ -170,12 +169,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sendProgress.setVisibility(View.VISIBLE);
+                button.setVisibility(View.GONE);
                 editText.onEditorAction(EditorInfo.IME_ACTION_DONE);
                 String phoneNumber = editText.getText().toString().trim();
                 if (phoneNumber.length() < 10) {
                     editText.setError("Invalid number");
                     editText.requestFocus();
                     sendProgress.setVisibility(View.GONE);
+                    button.setVisibility(View.VISIBLE);
                 } else {
                     startPhoneNumberVerification("+91" + phoneNumber);
                 }
@@ -225,9 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d(TAG, "signInWithCredential:success");
 
                     FirebaseUser user = task.getResult().getUser();
-                    if (getString(R.string.app_name).equals("Pass Issuer")) {
-                        login();
-                    }
+                    login();
                     // [START_EXCLUDE]
 //                    updateUI(STATE_SIGNIN_SUCCESS, user);
                     // [END_EXCLUDE]
@@ -260,8 +259,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        String flavor = getString(R.string.flavor_name);
+        try {
+            Intent intent = new Intent(LoginActivity.this, Class.forName("org.covid19india.android.safepassageindia." + flavor + ".MenuActivity"));
+            startActivity(intent);
+            finish();
+        } catch (Exception e) {
+            Log.d(TAG, e.getMessage());
+        }
     }
 }

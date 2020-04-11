@@ -24,11 +24,27 @@ android {
     productFlavors {
         PassIssuer {
             dimension = 'version'
-            applicationId = 'org.covid19india.android.passissuer'
             versionCode = 1
             versionName = '0.0.1'
             targetSdkVersion 29
             minSdkVersion 21
+            applicationIdSuffix = '.passissuer'
+        }
+        PassScanner {
+            dimension = 'version'
+            versionCode = 1
+            versionName = '0.0.1'
+            targetSdkVersion 29
+            minSdkVersion 21
+            applicationIdSuffix = '.passscanner'
+        }
+        PassUser {
+            dimension = 'version'
+            versionCode = 1
+            versionName = '0.0.1'
+            targetSdkVersion 29
+            minSdkVersion 21
+            applicationIdSuffix = '.passuser'
         }
     }
 

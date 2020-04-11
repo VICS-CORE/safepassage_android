@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context="org.covid19india.android.passissuer.MainActivity">
+    tools:context="org.covid19india.android.safepassageindia.passscanner.MenuActivity">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -31,4 +31,5 @@
             android:layout_alignParentBottom="true"
             android:text="Sign Out"/>
     </RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

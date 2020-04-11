@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:812979333829:android:05331a2f9115b3a5a25eac",
+        "mobilesdk_app_id": "1:812979333829:android:a07104119d336fa8a25eac",
         "android_client_info": {
-          "package_name": "org.covid19india.android.passissuer"
+          "package_name": "org.covid19india.android.safepassageindia"
         }
       },
       "oauth_client": [
         {
-          "client_id": "812979333829-i9b9bilghijdou8rpritj98u7tr3gihk.apps.googleusercontent.com",
+          "client_id": "812979333829-epgbo7t2jltb0lbh8mudjqaokccm3ij3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "org.covid19india.android.passissuer",
+            "package_name": "org.covid19india.android.safepassageindia",
             "certificate_hash": "6679962c9bb57b062b5682c9d551cc63f1adeae5"
           }
         },
@@ -45,17 +45,91 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:812979333829:android:a07104119d336fa8a25eac",
+        "mobilesdk_app_id": "1:812979333829:android:789aae4fcb963ceea25eac",
         "android_client_info": {
-          "package_name": "org.covid19india.android.safepassageindia"
+          "package_name": "org.covid19india.android.safepassageindia.passissuer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "812979333829-epgbo7t2jltb0lbh8mudjqaokccm3ij3.apps.googleusercontent.com",
+          "client_id": "812979333829-tr0ndnb8akdc566ss8tvi3ptb99brb9g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "org.covid19india.android.safepassageindia",
+            "package_name": "org.covid19india.android.safepassageindia.passissuer",
+            "certificate_hash": "6679962c9bb57b062b5682c9d551cc63f1adeae5"
+          }
+        },
+        {
+          "client_id": "812979333829-j9g5vcs1e71sguam3gdeiink4q2ohl94.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgeQ8Jzi-71OD6K2TPu99vvWBUpyWDCIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "812979333829-j9g5vcs1e71sguam3gdeiink4q2ohl94.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812979333829:android:82943bf16ff9da53a25eac",
+        "android_client_info": {
+          "package_name": "org.covid19india.android.safepassageindia.passscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812979333829-3i3nuqbjuo0fc5r0fqel7j9jprkr1qdp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.covid19india.android.safepassageindia.passscanner",
+            "certificate_hash": "6679962c9bb57b062b5682c9d551cc63f1adeae5"
+          }
+        },
+        {
+          "client_id": "812979333829-j9g5vcs1e71sguam3gdeiink4q2ohl94.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgeQ8Jzi-71OD6K2TPu99vvWBUpyWDCIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "812979333829-j9g5vcs1e71sguam3gdeiink4q2ohl94.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812979333829:android:bd40a8b1c75ff25ea25eac",
+        "android_client_info": {
+          "package_name": "org.covid19india.android.safepassageindia.passuser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812979333829-a0piencb2pf2mc4jqiq6lum6rb2up3g2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.covid19india.android.safepassageindia.passuser",
             "certificate_hash": "6679962c9bb57b062b5682c9d551cc63f1adeae5"
           }
         },
