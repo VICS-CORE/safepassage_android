@@ -1,5 +1,6 @@
 package org.covid19india.android.safepassageindia.passscanner;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -10,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -34,6 +36,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
         addScanner();
         button.setOnClickListener(new View.OnClickListener() {
@@ -46,6 +49,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                     phoneEdit.requestFocus();
                     return;
                 }
+                phoneEdit.setText("");
                 scannerView.stopCamera();
                 Intent intent = new Intent(ScannerActivity.this,ResultActivity.class);
                 intent.putExtra("content",content);
@@ -72,11 +76,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
         if(currentApiVersion >=  Build.VERSION_CODES.M)
         {
-            if(isPermissionGranted())
-            {
-                Toast.makeText(getApplicationContext(), "Permission already granted!", Toast.LENGTH_LONG).show();
-            }
-            else
+            if(!isPermissionGranted())
             {
                 requestPermission();
             }
@@ -120,5 +120,13 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     protected void onStop() {
         super.onStop();
         scannerView.stopCamera();
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId()==android.R.id.home){
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

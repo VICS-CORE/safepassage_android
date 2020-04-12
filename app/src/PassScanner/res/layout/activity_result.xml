@@ -15,10 +15,11 @@
             android:id="@+id/card_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:elevation="3dp"
+            android:elevation="10dp"
             app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="3dp"
             app:cardUseCompatPadding="true"
+            android:layout_margin="10dp"
             app:contentPadding="20dp">
 
             <RelativeLayout
@@ -61,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/card_view"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             android:background="@drawable/number_border"
             android:padding="10dp">
 
@@ -84,17 +85,18 @@
 
         <ImageView
             android:id="@+id/document_image"
-            android:src="@mipmap/ic_launcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/content_relative"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/ic_launcher" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/document_image"
-            android:textColor="@android:color/white"
             android:layout_centerHorizontal="true"
-            android:text="Document"/>
+            android:text="Document"
+            android:textColor="@android:color/white" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
