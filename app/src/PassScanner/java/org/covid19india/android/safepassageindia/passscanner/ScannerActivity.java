@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.zxing.Result;
 
 import org.covid19india.android.safepassageindia.R;
@@ -108,6 +109,9 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
     @Override
     public void handleResult(Result result) {
+        if(FirebaseAuth.getInstance().getCurrentUser()==null){
+            finish();
+        }
         final String text=result.getText();
         Log.d(TAG, result.getText());
         Log.d(TAG, result.getBarcodeFormat().toString());

@@ -49,6 +49,7 @@ public class MenuActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if(FirebaseAuth.getInstance().getCurrentUser()==null){
+            startActivity(new Intent(MenuActivity.this,LoginActivity.class));
             finish();
         }
     }
