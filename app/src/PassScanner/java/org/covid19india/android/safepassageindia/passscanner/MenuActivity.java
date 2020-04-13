@@ -2,6 +2,7 @@ package org.covid19india.android.safepassageindia.passscanner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.covid19india.android.safepassageindia.BroadcastReceiverService;
 import org.covid19india.android.safepassageindia.LoginActivity;
 import org.covid19india.android.safepassageindia.R;
 
@@ -48,6 +50,8 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Intent service = new Intent(MenuActivity.this, BroadcastReceiverService.class);
+        startService(service);
         if(FirebaseAuth.getInstance().getCurrentUser()==null){
             startActivity(new Intent(MenuActivity.this,LoginActivity.class));
             finish();
