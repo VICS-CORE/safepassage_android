@@ -2,6 +2,7 @@ package org.covid19india.android.safepassageindia.passscanner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,20 +11,27 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.covid19india.android.safepassageindia.BroadcastReceiverService;
 import org.covid19india.android.safepassageindia.LoginActivity;
 import org.covid19india.android.safepassageindia.R;
 
 public class MenuActivity extends AppCompatActivity {
     TextView textView;
-    Button button;
+    Button scanButton, signOutButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        textView = findViewById(R.id.welcome_text);
-        textView.setText(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
-        button = findViewById(R.id.sign_out);
-        button.setOnClickListener(new View.OnClickListener() {
+        init();
+        String welcomeMessage = "Welcome "+FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
+        textView.setText(welcomeMessage);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MenuActivity.this,ScannerActivity.class));
+            }
+        });
+        signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
@@ -32,10 +40,20 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void init() {
+        textView = findViewById(R.id.welcome_text);
+        scanButton = findViewById(R.id.scan_button);
+        signOutButton = findViewById(R.id.sign_out);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        Intent service = new Intent(MenuActivity.this, BroadcastReceiverService.class);
+        startService(service);
         if(FirebaseAuth.getInstance().getCurrentUser()==null){
+            startActivity(new Intent(MenuActivity.this,LoginActivity.class));
             finish();
         }
     }
