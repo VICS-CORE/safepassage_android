@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Pass Issuer</string>
     <string name="flavor_name">passissuer</string>
+    <string name="title_activity_pass_issuer_list">VCIS Pass Issue</string>
 </resources>
