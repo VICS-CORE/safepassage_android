@@ -41,7 +41,7 @@
             android:textColor="@android:color/white"
             android:textSize="40sp"
             android:textStyle="bold" />
-
+        <!-- if sign out is required, uncomment this and in the Menuactivity
         <Button
             android:id="@+id/sign_out"
             android:layout_width="wrap_content"
@@ -51,6 +51,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:text="@string/sign_out" />
+            -->
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
