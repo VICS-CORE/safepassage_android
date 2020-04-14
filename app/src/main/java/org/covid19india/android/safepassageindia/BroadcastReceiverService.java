@@ -7,12 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 public class BroadcastReceiverService extends Service {
     private static BroadcastReceiver simChangedReceiver;
+
     public BroadcastReceiverService() {
     }
 
@@ -26,27 +26,26 @@ public class BroadcastReceiverService extends Service {
         Log.d("Broadcast Receiver", "Service created");
         registerSimChangedReceiver();
     }
+
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Intent restartServiceIntent = new Intent(getApplicationContext(),this.getClass());
+        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
         restartServiceIntent.setPackage(getPackageName());
         startService(restartServiceIntent);
         super.onTaskRemoved(rootIntent);
     }
+
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         Log.d("Broadcast Receiver", "Service destroyed");
         unregisterReceiver(simChangedReceiver);
         simChangedReceiver = null;
     }
-    private void registerSimChangedReceiver()
-    {
-        simChangedReceiver = new BroadcastReceiver()
-        {
+
+    private void registerSimChangedReceiver() {
+        simChangedReceiver = new BroadcastReceiver() {
             @Override
-            public void onReceive(Context context, Intent intent)
-            {
+            public void onReceive(Context context, Intent intent) {
                 Log.d("Broadcast Receiver", "Receiver executed");
                 String state = intent.getExtras().getString("ss");
                 if (state == null) {
@@ -54,13 +53,13 @@ public class BroadcastReceiverService extends Service {
                 }
                 try {
                     if ("NOT_READY".equals(state)) {
-                        if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                             FirebaseAuth.getInstance().signOut();
                         }
                         Log.d("Broadcast Receiver", "SIM not ready");
                     }
-                } catch (Exception e){
-                    Log.e("Broadcast Receiver","State is null");
+                } catch (Exception e) {
+                    Log.e("Broadcast Receiver", "State is null");
                 }
             }
         };

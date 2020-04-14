@@ -15,11 +15,11 @@
             android:id="@+id/card_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:elevation="10dp"
             app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="3dp"
             app:cardUseCompatPadding="true"
-            android:layout_margin="10dp"
             app:contentPadding="20dp">
 
             <RelativeLayout

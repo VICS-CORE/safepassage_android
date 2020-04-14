@@ -49,10 +49,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="+91"
-                    android:textSize="20sp"
                     android:layout_marginStart="10dp"
-                    android:textColor="@android:color/darker_gray" />
+                    android:text="+91"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="20sp" />
 
                 <EditText
                     android:id="@+id/phoneEdit"
@@ -99,13 +99,14 @@
             android:layout_height="match_parent"
             android:layout_below="@id/divider2"
             android:visibility="gone">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="OTP : "
-                android:layout_weight="2"
-                android:layout_centerHorizontal="true"
                 android:layout_above="@id/otpLinear"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="2"
+                android:text="OTP : "
                 android:textColor="@android:color/white"
                 android:textSize="40sp" />
 
@@ -121,20 +122,20 @@
                     android:id="@+id/otpEdit"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
-                    android:maxLength="6"
-
                     android:backgroundTint="@android:color/white"
+
                     android:inputType="number"
                     android:letterSpacing="0.5"
+                    android:maxLength="6"
                     android:textColor="@android:color/white"
                     android:textSize="40sp" />
 
                 <ProgressBar
                     android:id="@+id/verifyProgress"
                     android:layout_width="wrap_content"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:visibility="gone" />
             </LinearLayout>
 
