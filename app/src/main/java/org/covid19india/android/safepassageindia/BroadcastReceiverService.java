@@ -24,7 +24,7 @@ public class BroadcastReceiverService extends Service {
     @Override
     public void onCreate() {
         Log.d("Broadcast Receiver", "Service created");
-        registerScreenOffReceiver();
+        registerSimChangedReceiver();
     }
     @Override
     public void onTaskRemoved(Intent rootIntent) {
@@ -37,13 +37,10 @@ public class BroadcastReceiverService extends Service {
     public void onDestroy()
     {
         Log.d("Broadcast Receiver", "Service destroyed");
-        Intent restartServiceIntent = new Intent(getApplicationContext(),this.getClass());
-        restartServiceIntent.setPackage(getPackageName());
-        startService(restartServiceIntent);
-//        unregisterReceiver(simChangedReceiver);
-//        m_ScreenOffReceiver = null;
+        unregisterReceiver(simChangedReceiver);
+        simChangedReceiver = null;
     }
-    private void registerScreenOffReceiver()
+    private void registerSimChangedReceiver()
     {
         simChangedReceiver = new BroadcastReceiver()
         {

@@ -31,6 +31,7 @@ public class MenuActivity extends AppCompatActivity {
                 startActivity(new Intent(MenuActivity.this,ScannerActivity.class));
             }
         });
+        /*
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -39,12 +40,13 @@ public class MenuActivity extends AppCompatActivity {
                 finish();
             }
         });
+        */
     }
 
     private void init() {
         textView = findViewById(R.id.welcome_text);
         scanButton = findViewById(R.id.scan_button);
-        signOutButton = findViewById(R.id.sign_out);
+//        signOutButton = findViewById(R.id.sign_out);
     }
 
     @Override
