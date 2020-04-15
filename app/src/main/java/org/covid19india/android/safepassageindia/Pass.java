@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Pass implements Parcelable {
     @SerializedName("pass_id")
-    Integer pass_id;
+    private Integer pass_id;
     @SerializedName("pass_passtype")
     private String pass_type;
     @SerializedName("pass_passreason")

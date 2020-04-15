@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.zxing.Result;
@@ -85,6 +86,9 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                     Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
                     intent.putExtra("passList", passList);
                     startActivity(intent);
+                } else {
+                    Toast.makeText(ScannerActivity.this, "Pass is null", Toast.LENGTH_SHORT).show();
+                    scannerView.startCamera();
                 }
             }
 

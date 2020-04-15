@@ -7,14 +7,22 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.covid19india.android.safepassageindia.Pass;
 import org.covid19india.android.safepassageindia.PassList;
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ResultActivity extends AppCompatActivity {
-    TextView contentText;
+    PassList passList;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,13 +30,19 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
+        displayPasses();
+    }
+
+    private void displayPasses() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new PassAdapter(passList.getPasses()));
     }
 
     private void init() {
+        recyclerView = findViewById(R.id.recycler_view);
         Intent intent = getIntent();
-        PassList passList = (PassList) intent.getParcelableExtra("passList");
-        contentText = findViewById(R.id.content_text);
-        contentText.setText("Sample Number");
+        passList = intent.getParcelableExtra("passList");
+        passList.renamePassType();
     }
 
     @Override

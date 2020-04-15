@@ -39,6 +39,18 @@ public class PassList implements Parcelable {
         return users.size() == 1;
     }
 
+    public void renamePassType() {
+        for (Pass pass : passes) {
+            if (pass.getPass_type().equals("O")) {
+                pass.setPass_type("One Time");
+            } else if (pass.getPass_type().equals("P")) {
+                pass.setPass_type("Permanent");
+            } else if (pass.getPass_type().equals("T")) {
+                pass.setPass_type("Temporary");
+            }
+        }
+    }
+
     @Override
     public int describeContents() {
         return 0;
