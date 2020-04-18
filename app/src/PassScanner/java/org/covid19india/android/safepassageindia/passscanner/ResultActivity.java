@@ -3,17 +3,11 @@ package org.covid19india.android.safepassageindia.passscanner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.covid19india.android.safepassageindia.Pass;
 import org.covid19india.android.safepassageindia.PassList;
 import org.covid19india.android.safepassageindia.R;
-import org.covid19india.android.safepassageindia.User;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

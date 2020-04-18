@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     RelativeLayout relativeLayout;
     ImageButton button;
     EditText phoneEdit;
+    ProgressBar progressBar;
     private String responseFormat = "json";
     private String userType = "3";
     private static final String TAG = "ScannerActivity";
@@ -53,6 +55,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
                 String content = phoneEdit.getText().toString().trim();
                 if (content.length() != 10) {
                     phoneEdit.setError("Invalid Number");
@@ -81,6 +84,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             @Override
             public void onResponse(Call<PassList> call, Response<PassList> response) {
                 Log.d(TAG, "API Call success");
+                progressBar.setVisibility(View.GONE);
                 PassList passList = response.body();
                 if (passList != null && passList.isUniqueUser()) {
                     Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
@@ -88,12 +92,13 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                     startActivity(intent);
                 } else {
                     Toast.makeText(ScannerActivity.this, "Pass is null", Toast.LENGTH_SHORT).show();
-                    scannerView.startCamera();
+                    scannerView.resumeCameraPreview(ScannerActivity.this);
                 }
             }
 
             @Override
             public void onFailure(Call<PassList> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
                 t.printStackTrace();
                 Log.d(TAG, "API Response Failure");
             }
@@ -105,6 +110,9 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.BELOW, R.id.linear_layout);
         relativeLayout.addView(scannerView, params);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(200, 200);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        relativeLayout.addView(progressBar, layoutParams);
         verifyPermission();
     }
 
@@ -113,6 +121,8 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         phoneEdit = findViewById(R.id.phone_edit);
         relativeLayout = findViewById(R.id.relative_layout);
         scannerView = new ZXingScannerView(ScannerActivity.this);
+        progressBar = new ProgressBar(getApplicationContext());
+        progressBar.setVisibility(View.GONE);
     }
 
     public void verifyPermission() {
@@ -157,6 +167,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         final String text = result.getText();
         Log.d(TAG, result.getText());
         Log.d(TAG, result.getBarcodeFormat().toString());
+        progressBar.setVisibility(View.VISIBLE);
         requestApi(text);
 //        Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
 //        intent.putExtra("content", text);
