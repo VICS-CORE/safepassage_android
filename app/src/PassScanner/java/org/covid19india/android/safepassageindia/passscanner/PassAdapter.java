@@ -1,54 +1,72 @@
 package org.covid19india.android.safepassageindia.passscanner;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.covid19india.android.safepassageindia.Pass;
+import org.covid19india.android.safepassageindia.PassList;
+import org.covid19india.android.safepassageindia.PassViewActivity;
 import org.covid19india.android.safepassageindia.R;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class PassAdapter extends RecyclerView.Adapter<PassAdapter.PassHolder> {
-    List<Pass> passes;
+    PassList passList;
+    Context context;
 
-    public PassAdapter(List<Pass> passes) {
-        this.passes = passes;
+    public PassAdapter(PassList passList) {
+        this.passList = passList;
     }
 
     @NonNull
     @Override
     public PassAdapter.PassHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        context = parent.getContext();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_pass_list, null);
         return new PassHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PassAdapter.PassHolder holder, int position) {
-        holder.imageView.setImageResource(R.mipmap.ic_launcher);
-        holder.title1.setText(passes.get(position).getPass_type());
-        holder.title2.setText(passes.get(position).getPass_issuedBy() + "");
+        final int pos = position;
+        String passType = "Type: " + passList.getPasses().get(position).getPass_type();
+        String issuer = "Issuer: " + passList.getPasses().get(position).getPass_issuedBy();
+        holder.imageView.setImageResource(R.drawable.img);
+        holder.title1.setText(passType);
+        holder.title2.setText(issuer);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, PassViewActivity.class);
+                intent.putExtra("user", passList.getUsers().get(0));
+                intent.putExtra("pass", passList.getPasses().get(pos));
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return passes.size();
+        return passList.getPasses().size();
     }
 
     public class PassHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
         private TextView title1, title2;
+        private CardView cardView;
 
-        public PassHolder(@NonNull View itemView) {
+        public PassHolder(@NonNull final View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.user_pic);
             title1 = itemView.findViewById(R.id.title1);
             title2 = itemView.findViewById(R.id.title2);
+            cardView = itemView.findViewById(R.id.card_view);
         }
     }
 }

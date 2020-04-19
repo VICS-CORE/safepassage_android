@@ -29,7 +29,7 @@ public class ResultActivity extends AppCompatActivity {
 
     private void displayPasses() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new PassAdapter(passList.getPasses()));
+        recyclerView.setAdapter(new PassAdapter(passList));
     }
 
     private void init() {
