@@ -1,8 +1,5 @@
 package org.covid19india.android.safepassageindia.passscanner;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,20 +12,23 @@ import org.covid19india.android.safepassageindia.BroadcastReceiverService;
 import org.covid19india.android.safepassageindia.LoginActivity;
 import org.covid19india.android.safepassageindia.R;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class MenuActivity extends AppCompatActivity {
     TextView textView;
     Button scanButton, signOutButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         init();
-        String welcomeMessage = "Welcome "+FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
+        String welcomeMessage = "Welcome " + FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
         textView.setText(welcomeMessage);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MenuActivity.this,ScannerActivity.class));
+                startActivity(new Intent(MenuActivity.this, ScannerActivity.class));
             }
         });
         /*
@@ -54,11 +54,12 @@ public class MenuActivity extends AppCompatActivity {
         super.onResume();
         Intent service = new Intent(MenuActivity.this, BroadcastReceiverService.class);
         startService(service);
-        if(FirebaseAuth.getInstance().getCurrentUser()==null){
-            startActivity(new Intent(MenuActivity.this,LoginActivity.class));
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            startActivity(new Intent(MenuActivity.this, LoginActivity.class));
             finish();
         }
     }
+
     @Override
     public void onBackPressed() {
         //Do nothing

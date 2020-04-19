@@ -26,8 +26,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 
-import org.covid19india.android.safepassageindia.passscanner.MenuActivity;
-
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
