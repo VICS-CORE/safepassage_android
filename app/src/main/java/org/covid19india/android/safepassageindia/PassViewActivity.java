@@ -3,6 +3,7 @@ package org.covid19india.android.safepassageindia;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class PassViewActivity extends AppCompatActivity {
@@ -27,6 +29,7 @@ public class PassViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pass_view);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
         getPass();
         setPass();
@@ -111,5 +114,14 @@ public class PassViewActivity extends AppCompatActivity {
                 passVerified.setImageResource(R.drawable.invalid_icon);
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

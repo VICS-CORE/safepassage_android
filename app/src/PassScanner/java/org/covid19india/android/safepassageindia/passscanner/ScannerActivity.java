@@ -101,6 +101,8 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                 progressBar.setVisibility(View.GONE);
                 t.printStackTrace();
                 Log.d(TAG, "API Response Failure");
+                Toast.makeText(ScannerActivity.this, "Server cannot be accessed!", Toast.LENGTH_SHORT).show();
+                scannerView.resumeCameraPreview(ScannerActivity.this);
             }
         });
 
