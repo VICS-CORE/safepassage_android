@@ -155,8 +155,6 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                     scannerView.setResultHandler(this);
                     scannerView.startCamera();
                 }
-            } else {
-                requestPermission();
             }
         }
     }
