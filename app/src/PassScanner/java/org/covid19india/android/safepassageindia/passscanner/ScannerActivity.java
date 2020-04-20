@@ -74,6 +74,12 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     }
 
     private void requestApi(String content) {
+        if (content.length() != 10) {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(ScannerActivity.this, "QR invalid", Toast.LENGTH_SHORT).show();
+            scannerView.resumeCameraPreview(ScannerActivity.this);
+            return;
+        }
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(UserApi.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -83,7 +89,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         passListCall.enqueue(new Callback<PassList>() {
             @Override
             public void onResponse(Call<PassList> call, Response<PassList> response) {
-                Log.d(TAG, "API Call success");
+                Log.d(TAG, "API Call success, Response code: " + response.code());
                 progressBar.setVisibility(View.GONE);
                 PassList passList = response.body();
                 if (passList != null && passList.isUniqueUser()) {
@@ -91,7 +97,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                     intent.putExtra("passList", passList);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(ScannerActivity.this, "Pass is null", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ScannerActivity.this, "User doesn't exist", Toast.LENGTH_SHORT).show();
                     scannerView.resumeCameraPreview(ScannerActivity.this);
                 }
             }
