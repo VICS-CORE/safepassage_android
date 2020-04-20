@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -41,8 +44,9 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     ImageButton button;
     EditText phoneEdit;
     ProgressBar progressBar;
-    private String responseFormat = "json";
-    private String userType = "3";
+    Vibrator vibrator;
+    private static final String responseFormat = "json";
+    private static final String userType = "3";
     private static final String TAG = "ScannerActivity";
 
     @Override
@@ -56,27 +60,64 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
+                phoneEdit.onEditorAction(EditorInfo.IME_ACTION_DONE);
                 String content = phoneEdit.getText().toString().trim();
                 if (content.length() != 10) {
                     phoneEdit.setError("Invalid Number");
                     phoneEdit.setText("");
                     phoneEdit.requestFocus();
+                    progressBar.setVisibility(View.GONE);
                     return;
                 }
                 phoneEdit.setText("");
-                scannerView.stopCamera();
+                scannerView.stopCameraPreview();
                 requestApi(content);
-//                Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
-//                intent.putExtra("content", content);
-//                startActivity(intent);
             }
         });
+    }
+
+    private void init() {
+        button = findViewById(R.id.phone_button);
+        phoneEdit = findViewById(R.id.phone_edit);
+        relativeLayout = findViewById(R.id.relative_layout);
+        scannerView = new ZXingScannerView(ScannerActivity.this);
+        progressBar = new ProgressBar(getApplicationContext());
+        progressBar.setVisibility(View.GONE);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        disableAutoSuggestion();
+    }
+
+    private void disableAutoSuggestion() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getWindow()
+                    .getDecorView()
+                    .setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);
+        }
+    }
+
+    private void startVibration(int milliseconds) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            vibrator.vibrate(milliseconds);
+        }
+    }
+
+    private void addScanner() {
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        params.addRule(RelativeLayout.BELOW, R.id.linear_layout);
+        relativeLayout.addView(scannerView, params);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(200, 200);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        relativeLayout.addView(progressBar, layoutParams);
+        verifyPermission();
     }
 
     private void requestApi(String content) {
         if (content.length() != 10) {
             progressBar.setVisibility(View.GONE);
             Toast.makeText(ScannerActivity.this, "QR invalid", Toast.LENGTH_SHORT).show();
+            startVibration(200);
             scannerView.resumeCameraPreview(ScannerActivity.this);
             return;
         }
@@ -91,13 +132,14 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             public void onResponse(Call<PassList> call, Response<PassList> response) {
                 Log.d(TAG, "API Call success, Response code: " + response.code());
                 progressBar.setVisibility(View.GONE);
+                startVibration(200);
                 PassList passList = response.body();
                 if (passList != null && passList.isUniqueUser()) {
                     Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
                     intent.putExtra("passList", passList);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(ScannerActivity.this, "User doesn't exist", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "User doesn't exist", Toast.LENGTH_LONG).show();
                     scannerView.resumeCameraPreview(ScannerActivity.this);
                 }
             }
@@ -108,30 +150,13 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                 t.printStackTrace();
                 Log.d(TAG, "API Response Failure");
                 Toast.makeText(ScannerActivity.this, "Server cannot be accessed!", Toast.LENGTH_SHORT).show();
+                startVibration(200);
                 scannerView.resumeCameraPreview(ScannerActivity.this);
             }
         });
 
     }
 
-    private void addScanner() {
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        params.addRule(RelativeLayout.BELOW, R.id.linear_layout);
-        relativeLayout.addView(scannerView, params);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(200, 200);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        relativeLayout.addView(progressBar, layoutParams);
-        verifyPermission();
-    }
-
-    private void init() {
-        button = findViewById(R.id.phone_button);
-        phoneEdit = findViewById(R.id.phone_edit);
-        relativeLayout = findViewById(R.id.relative_layout);
-        scannerView = new ZXingScannerView(ScannerActivity.this);
-        progressBar = new ProgressBar(getApplicationContext());
-        progressBar.setVisibility(View.GONE);
-    }
 
     public void verifyPermission() {
         int currentApiVersion = Build.VERSION.SDK_INT;
@@ -152,6 +177,18 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     }
 
     @Override
+    public void handleResult(Result result) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            finish();
+        }
+        final String text = result.getText();
+        Log.d(TAG, result.getText());
+        Log.d(TAG, result.getBarcodeFormat().toString());
+        progressBar.setVisibility(View.VISIBLE);
+        requestApi(text);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         int currentApiVersion = android.os.Build.VERSION.SDK_INT;
@@ -163,21 +200,6 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                 }
             }
         }
-    }
-
-    @Override
-    public void handleResult(Result result) {
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            finish();
-        }
-        final String text = result.getText();
-        Log.d(TAG, result.getText());
-        Log.d(TAG, result.getBarcodeFormat().toString());
-        progressBar.setVisibility(View.VISIBLE);
-        requestApi(text);
-//        Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
-//        intent.putExtra("content", text);
-//        startActivity(intent);
     }
 
     @Override
