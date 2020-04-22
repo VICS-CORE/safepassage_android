@@ -25,18 +25,18 @@ jobs:
         appId: ${{secrets.FIREBASE_APP_ID_SCANNER}}
         token: ${{secrets.FIREBASE_TOKEN}}
         groups: vics
-        file: app/build/outputs/apk/PassScanner/debug/app-PassScanner-debug-unsigned.apk
+        file: app/build/outputs/apk/PassScanner/debug/app-PassScanner-debug.apk
     - name: upload PassUser to Firebase App Distribution
       uses: wzieba/Firebase-Distribution-Github-Action@v1.2.1
       with:
         appId: ${{secrets.FIREBASE_APP_ID_USER}}
         token: ${{secrets.FIREBASE_TOKEN}}
         groups: vics
-        file: app/build/outputs/apk/PassUser/debug/app-PassUser-debug-unsigned.apk
+        file: app/build/outputs/apk/PassUser/debug/app-PassUser-debug.apk
     - name: upload PassIssuer to Firebase App Distribution
       uses: wzieba/Firebase-Distribution-Github-Action@v1.2.1
       with:
         appId: ${{secrets.FIREBASE_APP_ID_ISSUER}}
         token: ${{secrets.FIREBASE_TOKEN}}
         groups: vics
-        file: app/build/outputs/apk/PassIssuer/debug/app-PassIssuer-debug-unsigned.apk
+        file: app/build/outputs/apk/PassIssuer/debug/app-PassIssuer-debug.apk
