@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 android {
+    signingConfigs {
+        config {
+            storeFile file('upload-keystore.jks')
+            storePassword 'safeCovid19Passage'
+            keyAlias = 'upload'
+            keyPassword 'SafeuploadPassage'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
 
@@ -29,6 +37,7 @@ android {
             targetSdkVersion 29
             minSdkVersion 21
             applicationIdSuffix = '.passissuer'
+            signingConfig signingConfigs.config
         }
         PassScanner {
             dimension = 'version'
@@ -37,6 +46,7 @@ android {
             targetSdkVersion 29
             minSdkVersion 21
             applicationIdSuffix = '.passscanner'
+            signingConfig signingConfigs.config
         }
         PassUser {
             dimension = 'version'
@@ -45,6 +55,7 @@ android {
             targetSdkVersion 29
             minSdkVersion 21
             applicationIdSuffix = '.passuser'
+            signingConfig signingConfigs.config
         }
     }
 
