@@ -1,4 +1,4 @@
-package org.covid19india.android.safepassageindia.passscanner;
+package org.covid19india.android.safepassageindia.passuser;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,20 +8,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.covid19india.android.safepassageindia.PassList;
 import org.covid19india.android.safepassageindia.PassViewActivity;
 import org.covid19india.android.safepassageindia.R;
-import org.covid19india.android.safepassageindia.UserPassList;
+import org.covid19india.android.safepassageindia.User;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class PassAdapter extends RecyclerView.Adapter<PassAdapter.PassHolder> {
-    UserPassList userPassList;
-    Context context;
+    private PassList passList;
+    private User user;
+    private Context context;
 
-    public PassAdapter(UserPassList userPassList) {
-        this.userPassList = userPassList;
+    public PassAdapter(PassList passList, User user) {
+        this.passList = passList;
+        this.user = user;
     }
 
     @NonNull
@@ -35,8 +38,8 @@ public class PassAdapter extends RecyclerView.Adapter<PassAdapter.PassHolder> {
     @Override
     public void onBindViewHolder(@NonNull PassAdapter.PassHolder holder, int position) {
         final int pos = position;
-        String passType = "Type: " + userPassList.getPasses().get(position).getPass_type();
-        String issuer = "Issuer: " + userPassList.getPasses().get(position).getPass_issuedBy();
+        String passType = "Type: " + passList.getPasses().get(position).getPass_type();
+        String issuer = "Issuer: " + passList.getPasses().get(position).getPass_issuedBy();
         holder.imageView.setImageResource(R.drawable.img);
         holder.title1.setText(passType);
         holder.title2.setText(issuer);
@@ -44,8 +47,8 @@ public class PassAdapter extends RecyclerView.Adapter<PassAdapter.PassHolder> {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, PassViewActivity.class);
-                intent.putExtra("user", userPassList.getUsers().get(0));
-                intent.putExtra("pass", userPassList.getPasses().get(pos));
+                intent.putExtra("user", user);
+                intent.putExtra("pass", passList.getPasses().get(pos));
                 context.startActivity(intent);
             }
         });
@@ -53,7 +56,7 @@ public class PassAdapter extends RecyclerView.Adapter<PassAdapter.PassHolder> {
 
     @Override
     public int getItemCount() {
-        return userPassList.getPasses().size();
+        return passList.getPasses().size();
     }
 
     public class PassHolder extends RecyclerView.ViewHolder {

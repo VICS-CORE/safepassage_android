@@ -20,9 +20,9 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.zxing.Result;
 
-import org.covid19india.android.safepassageindia.PassList;
 import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.UserApi;
+import org.covid19india.android.safepassageindia.UserPassList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -126,17 +126,17 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         UserApi userApi = retrofit.create(UserApi.class);
-        Call<PassList> passListCall = userApi.getPasses(responseFormat, content, userType);
-        passListCall.enqueue(new Callback<PassList>() {
+        Call<UserPassList> passListCall = userApi.getUserPasses(responseFormat, content, userType);
+        passListCall.enqueue(new Callback<UserPassList>() {
             @Override
-            public void onResponse(Call<PassList> call, Response<PassList> response) {
+            public void onResponse(Call<UserPassList> call, Response<UserPassList> response) {
                 Log.d(TAG, "API Call success, Response code: " + response.code());
                 progressBar.setVisibility(View.GONE);
                 startVibration(200);
-                PassList passList = response.body();
-                if (passList != null && passList.isUniqueUser()) {
+                UserPassList userPassList = response.body();
+                if (userPassList != null && userPassList.isUniqueUser()) {
                     Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
-                    intent.putExtra("passList", passList);
+                    intent.putExtra("userPassList", userPassList);
                     startActivity(intent);
                 } else {
                     Toast.makeText(getApplicationContext(), "User doesn't exist", Toast.LENGTH_LONG).show();
@@ -145,7 +145,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             }
 
             @Override
-            public void onFailure(Call<PassList> call, Throwable t) {
+            public void onFailure(Call<UserPassList> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 t.printStackTrace();
                 Log.d(TAG, "API Response Failure");
