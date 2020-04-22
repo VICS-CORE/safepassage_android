@@ -6,8 +6,8 @@ import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.covid19india.android.safepassageindia.PassList;
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.UserPassList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ResultActivity extends AppCompatActivity {
-    PassList passList;
+    UserPassList userPassList;
     RecyclerView recyclerView;
 
     @Override
@@ -29,14 +29,14 @@ public class ResultActivity extends AppCompatActivity {
 
     private void displayPasses() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new PassAdapter(passList));
+        recyclerView.setAdapter(new PassAdapter(userPassList));
     }
 
     private void init() {
         recyclerView = findViewById(R.id.recycler_view);
         Intent intent = getIntent();
-        passList = intent.getParcelableExtra("passList");
-        passList.renamePassType();
+        userPassList = intent.getParcelableExtra("userPassList");
+        userPassList.renamePassType();
     }
 
     @Override

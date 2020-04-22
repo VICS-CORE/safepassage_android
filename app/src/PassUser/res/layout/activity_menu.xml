@@ -1,38 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
     tools:context="org.covid19india.android.safepassageindia.passuser.MenuActivity">
 
-    <RelativeLayout
+    <View
+        android:id="@+id/divider1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="5dp"
+        android:background="@color/divider"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
-        <View
-            android:id="@+id/divider1"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider1">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:background="@color/divider" />
-
-        <TextView
-            android:id="@+id/welcome_text"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:textColor="@android:color/white"
-            android:textSize="20sp" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/sign_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:text="Sign Out" />
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/welcome_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/qr_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/welcome_text"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp" />
+
+            <ProgressBar
+                android:id="@+id/pass_progress"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp" />
+            <!-- if sign out is required, uncomment this and in the Menuactivity
+            <Button
+                android:id="@+id/sign_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:text="Sign Out" />
+                -->
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -17,9 +20,9 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.zxing.Result;
 
-import org.covid19india.android.safepassageindia.PassList;
 import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.UserApi;
+import org.covid19india.android.safepassageindia.UserPassList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,8 +44,9 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     ImageButton button;
     EditText phoneEdit;
     ProgressBar progressBar;
-    private String responseFormat = "json";
-    private String userType = "3";
+    Vibrator vibrator;
+    private static final String responseFormat = "json";
+    private static final String userType = "3";
     private static final String TAG = "ScannerActivity";
 
     @Override
@@ -56,54 +60,47 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
+                phoneEdit.onEditorAction(EditorInfo.IME_ACTION_DONE);
                 String content = phoneEdit.getText().toString().trim();
                 if (content.length() != 10) {
                     phoneEdit.setError("Invalid Number");
                     phoneEdit.setText("");
                     phoneEdit.requestFocus();
+                    progressBar.setVisibility(View.GONE);
                     return;
                 }
                 phoneEdit.setText("");
-                scannerView.stopCamera();
+                scannerView.stopCameraPreview();
                 requestApi(content);
-//                Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
-//                intent.putExtra("content", content);
-//                startActivity(intent);
             }
         });
     }
 
-    private void requestApi(String content) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(UserApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        UserApi userApi = retrofit.create(UserApi.class);
-        Call<PassList> passListCall = userApi.getPasses(responseFormat, content, userType);
-        passListCall.enqueue(new Callback<PassList>() {
-            @Override
-            public void onResponse(Call<PassList> call, Response<PassList> response) {
-                Log.d(TAG, "API Call success");
-                progressBar.setVisibility(View.GONE);
-                PassList passList = response.body();
-                if (passList != null && passList.isUniqueUser()) {
-                    Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
-                    intent.putExtra("passList", passList);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(ScannerActivity.this, "Pass is null", Toast.LENGTH_SHORT).show();
-                    scannerView.resumeCameraPreview(ScannerActivity.this);
-                }
-            }
+    private void init() {
+        button = findViewById(R.id.phone_button);
+        phoneEdit = findViewById(R.id.phone_edit);
+        relativeLayout = findViewById(R.id.relative_layout);
+        scannerView = new ZXingScannerView(ScannerActivity.this);
+        progressBar = new ProgressBar(getApplicationContext());
+        progressBar.setVisibility(View.GONE);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        disableAutoSuggestion();
+    }
 
-            @Override
-            public void onFailure(Call<PassList> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                t.printStackTrace();
-                Log.d(TAG, "API Response Failure");
-            }
-        });
+    private void disableAutoSuggestion() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getWindow()
+                    .getDecorView()
+                    .setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);
+        }
+    }
 
+    private void startVibration(int milliseconds) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            vibrator.vibrate(milliseconds);
+        }
     }
 
     private void addScanner() {
@@ -116,14 +113,50 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         verifyPermission();
     }
 
-    private void init() {
-        button = findViewById(R.id.phone_button);
-        phoneEdit = findViewById(R.id.phone_edit);
-        relativeLayout = findViewById(R.id.relative_layout);
-        scannerView = new ZXingScannerView(ScannerActivity.this);
-        progressBar = new ProgressBar(getApplicationContext());
-        progressBar.setVisibility(View.GONE);
+    private void requestApi(String content) {
+        if (content.length() != 10) {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(ScannerActivity.this, "QR invalid", Toast.LENGTH_SHORT).show();
+            startVibration(200);
+            scannerView.resumeCameraPreview(ScannerActivity.this);
+            return;
+        }
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(UserApi.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        UserApi userApi = retrofit.create(UserApi.class);
+        Call<UserPassList> passListCall = userApi.getUserPasses(responseFormat, content, userType);
+        passListCall.enqueue(new Callback<UserPassList>() {
+            @Override
+            public void onResponse(Call<UserPassList> call, Response<UserPassList> response) {
+                Log.d(TAG, "API Call success, Response code: " + response.code());
+                progressBar.setVisibility(View.GONE);
+                startVibration(200);
+                UserPassList userPassList = response.body();
+                if (userPassList != null && userPassList.isUniqueUser()) {
+                    Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
+                    intent.putExtra("userPassList", userPassList);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "User doesn't exist", Toast.LENGTH_LONG).show();
+                    scannerView.resumeCameraPreview(ScannerActivity.this);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserPassList> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                t.printStackTrace();
+                Log.d(TAG, "API Response Failure");
+                Toast.makeText(ScannerActivity.this, "Server cannot be accessed!", Toast.LENGTH_SHORT).show();
+                startVibration(200);
+                scannerView.resumeCameraPreview(ScannerActivity.this);
+            }
+        });
+
     }
+
 
     public void verifyPermission() {
         int currentApiVersion = Build.VERSION.SDK_INT;
@@ -144,22 +177,6 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        int currentApiVersion = android.os.Build.VERSION.SDK_INT;
-        if (currentApiVersion >= android.os.Build.VERSION_CODES.M) {
-            if (isPermissionGranted()) {
-                if (scannerView != null) {
-                    scannerView.setResultHandler(this);
-                    scannerView.startCamera();
-                }
-            } else {
-                requestPermission();
-            }
-        }
-    }
-
-    @Override
     public void handleResult(Result result) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             finish();
@@ -169,9 +186,20 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         Log.d(TAG, result.getBarcodeFormat().toString());
         progressBar.setVisibility(View.VISIBLE);
         requestApi(text);
-//        Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
-//        intent.putExtra("content", text);
-//        startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentApiVersion >= android.os.Build.VERSION_CODES.M) {
+            if (isPermissionGranted()) {
+                if (scannerView != null) {
+                    scannerView.setResultHandler(this);
+                    scannerView.startCamera();
+                }
+            }
+        }
     }
 
     @Override
