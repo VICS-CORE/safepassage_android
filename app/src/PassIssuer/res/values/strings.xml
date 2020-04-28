@@ -3,4 +3,7 @@
     <string name="app_name">Pass Issuer</string>
     <string name="flavor_name">passissuer</string>
     <string name="title_activity_pass_issuer_list">VCIS Pass Issue</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
