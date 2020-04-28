@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import org.covid19india.android.safepassageindia.PassViewActivity;
 import org.covid19india.android.safepassageindia.R;
-import org.covid19india.android.safepassageindia.UserPassList;
+import org.covid19india.android.safepassageindia.model.UserPassList;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;

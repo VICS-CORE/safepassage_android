@@ -15,11 +15,11 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-import org.covid19india.android.safepassageindia.PassList;
 import org.covid19india.android.safepassageindia.R;
-import org.covid19india.android.safepassageindia.User;
 import org.covid19india.android.safepassageindia.UserApi;
-import org.covid19india.android.safepassageindia.UserList;
+import org.covid19india.android.safepassageindia.model.PassList;
+import org.covid19india.android.safepassageindia.model.User;
+import org.covid19india.android.safepassageindia.model.UserList;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;

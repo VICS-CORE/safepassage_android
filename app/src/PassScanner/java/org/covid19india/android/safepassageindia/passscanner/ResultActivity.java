@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.covid19india.android.safepassageindia.R;
-import org.covid19india.android.safepassageindia.UserPassList;
+import org.covid19india.android.safepassageindia.model.UserPassList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

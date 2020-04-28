@@ -1,6 +1,8 @@
-package org.covid19india.android.safepassageindia;
+package org.covid19india.android.safepassageindia.model;
 
 import com.google.gson.annotations.SerializedName;
+
+import org.covid19india.android.safepassageindia.model.User;
 
 import java.util.List;
 

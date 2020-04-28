@@ -22,7 +22,7 @@ import com.google.zxing.Result;
 
 import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.UserApi;
-import org.covid19india.android.safepassageindia.UserPassList;
+import org.covid19india.android.safepassageindia.model.UserPassList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

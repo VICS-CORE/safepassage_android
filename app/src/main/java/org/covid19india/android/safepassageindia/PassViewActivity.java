@@ -7,6 +7,9 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.covid19india.android.safepassageindia.model.Pass;
+import org.covid19india.android.safepassageindia.model.User;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

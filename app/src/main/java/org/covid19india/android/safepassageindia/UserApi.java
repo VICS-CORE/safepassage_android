@@ -1,5 +1,9 @@
 package org.covid19india.android.safepassageindia;
 
+import org.covid19india.android.safepassageindia.model.PassList;
+import org.covid19india.android.safepassageindia.model.UserList;
+import org.covid19india.android.safepassageindia.model.UserPassList;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

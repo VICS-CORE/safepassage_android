@@ -1,4 +1,4 @@
-package org.covid19india.android.safepassageindia;
+package org.covid19india.android.safepassageindia.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.covid19india.android.safepassageindia.PassList;
+import org.covid19india.android.safepassageindia.model.PassList;
 import org.covid19india.android.safepassageindia.PassViewActivity;
 import org.covid19india.android.safepassageindia.R;
-import org.covid19india.android.safepassageindia.User;
+import org.covid19india.android.safepassageindia.model.User;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
