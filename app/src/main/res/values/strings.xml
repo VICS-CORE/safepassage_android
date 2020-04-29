@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Safe Passage India</string>
+    <string name="login_with_phone_number">Login with phone number</string>
+    <string name="country_code_india">+91</string>
+    <string name="phone_number">Phone number</string>
+    <string name="otp">OTP :</string>
+    <string name="verify">Verify</string>
 </resources>

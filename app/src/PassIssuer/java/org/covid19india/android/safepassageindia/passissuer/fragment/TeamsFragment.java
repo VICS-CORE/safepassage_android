@@ -1,9 +1,13 @@
 package org.covid19india.android.safepassageindia.passissuer.fragment;
 
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.covid19india.android.safepassageindia.R;
 
@@ -15,6 +19,7 @@ import androidx.fragment.app.Fragment;
  * create an instance of this fragment.
  */
 public class TeamsFragment extends Fragment {
+    private Button button;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -59,6 +64,24 @@ public class TeamsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_teams, container, false);
+        View view = inflater.inflate(R.layout.fragment_teams, container, false);
+        button = view.findViewById(R.id.btn_new);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inflateRoleButtons(view);
+            }
+        });
+        return view;
+    }
+
+    private void inflateRoleButtons(View view) {
+        View dialogView = getLayoutInflater().inflate(R.layout.content_role_button,null);
+        Button teamButton = dialogView.findViewById(R.id.btn_team);
+        Button memberButton = dialogView.findViewById(R.id.btn_member);
+
+        BottomSheetDialog dialog = new BottomSheetDialog(view.getContext());
+        dialog.setContentView(dialogView);
+        dialog.show();
     }
 }

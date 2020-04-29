@@ -65,8 +65,15 @@ public class PassViewActivity extends AppCompatActivity {
         String startDate = "";
         String endDate = "";
         String medicalVerification = "";
+
+        //User Image
+        if (user.getUser_image() == null || user.getUser_image().isEmpty()) {
+            userImage.setImageResource(R.drawable.img);
+        }
+        //Pass Type
         type = pass.getPass_type();
 
+        // Starting and Expiry date
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
             DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy',' HH:mm", Locale.ENGLISH);
@@ -90,11 +97,14 @@ public class PassViewActivity extends AppCompatActivity {
             }
         }
 
+        //Medical Verification
         if (pass.getPass_medicalVerification().equals("Y")) {
             medicalVerification = "Required";
         } else if (pass.getPass_medicalVerification().equals("N")) {
             medicalVerification = "Not Required";
         }
+
+        //Final Content
         String content = "Pass Status: " + passStatus + "\n"
                 + "Pass Type: " + type + "\n"
                 + "From: " + startDate + "\n"

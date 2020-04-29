@@ -45,9 +45,9 @@ public class MenuActivity extends AppCompatActivity {
     private void setViewPager() {
         List<Fragment> fragmentList = new ArrayList<>();
         List<String> titleList = new ArrayList<>();
-        fragmentList.add(new PassesFragment());
+        fragmentList.add(PassesFragment.newInstance("Similar to intent.putExtra method","Similar to intent.putExtra method"));
         titleList.add("Passes");
-        fragmentList.add(new TeamsFragment());
+        fragmentList.add(TeamsFragment.newInstance("Similar to intent.putExtra method","Similar to intent.putExtra method"));
         titleList.add("Teams");
 
         pagerAdapter.setFragments(fragmentList, titleList);
