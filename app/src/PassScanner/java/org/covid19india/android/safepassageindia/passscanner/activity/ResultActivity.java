@@ -1,4 +1,4 @@
-package org.covid19india.android.safepassageindia.passscanner;
+package org.covid19india.android.safepassageindia.passscanner.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.model.UserPassList;
+import org.covid19india.android.safepassageindia.passscanner.adapter.PassAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

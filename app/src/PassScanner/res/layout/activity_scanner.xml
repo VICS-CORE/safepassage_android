@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context="org.covid19india.android.safepassageindia.passscanner.ScannerActivity">
+    tools:context="org.covid19india.android.safepassageindia.passscanner.activity.ScannerActivity">
 
     <RelativeLayout
         android:id="@+id/relative_layout"

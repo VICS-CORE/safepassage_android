@@ -1,4 +1,4 @@
-package org.covid19india.android.safepassageindia;
+package org.covid19india.android.safepassageindia.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +25,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+
+import org.covid19india.android.safepassageindia.R;
 
 import java.util.concurrent.TimeUnit;
 
@@ -261,7 +263,7 @@ public class LoginActivity extends AppCompatActivity {
     private void login() {
         String flavor = getString(R.string.flavor_name);
         try {
-            Intent intent = new Intent(LoginActivity.this, Class.forName("org.covid19india.android.safepassageindia." + flavor + ".MenuActivity"));
+            Intent intent = new Intent(LoginActivity.this, Class.forName("org.covid19india.android.safepassageindia." + flavor + ".activity.MenuActivity"));
             startActivity(intent);
             finish();
         } catch (Exception e) {

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context="org.covid19india.android.safepassageindia.passuser.MenuActivity">
+    tools:context="org.covid19india.android.safepassageindia.passuser.activity.MenuActivity">
 
     <View
         android:id="@+id/divider1"
@@ -47,10 +47,10 @@
 
             <ProgressBar
                 android:id="@+id/pass_progress"
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"

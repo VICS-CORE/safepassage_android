@@ -1,10 +1,9 @@
-package org.covid19india.android.safepassageindia.passissuer;
+package org.covid19india.android.safepassageindia.passissuer.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -14,6 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.passissuer.OrgAdapter;
+import org.covid19india.android.safepassageindia.passissuer.OrgDataManager;
+import org.covid19india.android.safepassageindia.passissuer.OrgUserInfo;
 
 import java.util.List;
 

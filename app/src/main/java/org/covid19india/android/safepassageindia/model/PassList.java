@@ -2,8 +2,6 @@ package org.covid19india.android.safepassageindia.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.covid19india.android.safepassageindia.model.Pass;
-
 import java.util.List;
 
 public class PassList {

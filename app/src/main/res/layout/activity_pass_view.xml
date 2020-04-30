@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context="org.covid19india.android.safepassageindia.PassViewActivity">
+    tools:context="org.covid19india.android.safepassageindia.activity.PassViewActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,18 +27,18 @@
                 android:id="@+id/content_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:text=""
                 android:textColor="@android:color/white"
-                android:text="" />
+                android:textSize="20sp" />
 
             <ImageView
                 android:id="@+id/verified_image"
-                android:padding="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/content_text"
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/number_border"
+                android:padding="5dp"
                 android:src="@drawable/valid_icon" />
         </RelativeLayout>
     </RelativeLayout>

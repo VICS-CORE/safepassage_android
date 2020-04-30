@@ -1,4 +1,4 @@
-package org.covid19india.android.safepassageindia.passscanner;
+package org.covid19india.android.safepassageindia.passscanner.activity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;

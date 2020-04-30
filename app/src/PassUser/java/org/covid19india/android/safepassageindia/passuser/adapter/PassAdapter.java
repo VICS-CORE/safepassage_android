@@ -1,4 +1,4 @@
-package org.covid19india.android.safepassageindia.passuser;
+package org.covid19india.android.safepassageindia.passuser.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.covid19india.android.safepassageindia.model.PassList;
-import org.covid19india.android.safepassageindia.PassViewActivity;
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.activity.PassViewActivity;
+import org.covid19india.android.safepassageindia.model.PassList;
 import org.covid19india.android.safepassageindia.model.User;
 
 import androidx.annotation.NonNull;

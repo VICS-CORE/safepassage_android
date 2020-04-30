@@ -1,4 +1,4 @@
-package org.covid19india.android.safepassageindia.passuser;
+package org.covid19india.android.safepassageindia.passuser.activity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -10,7 +10,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
@@ -20,6 +22,7 @@ import org.covid19india.android.safepassageindia.UserApi;
 import org.covid19india.android.safepassageindia.model.PassList;
 import org.covid19india.android.safepassageindia.model.User;
 import org.covid19india.android.safepassageindia.model.UserList;
+import org.covid19india.android.safepassageindia.passuser.adapter.PassAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -52,6 +55,12 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         init();
+        FirebaseAuth.getInstance().getCurrentUser().getIdToken(false).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+            @Override
+            public void onSuccess(GetTokenResult getTokenResult) {
+                Log.d(TAG, "TokenId = " + getTokenResult.getToken());
+            }
+        });
         String welcomeMessage = "Welcome " + FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
         textView.setText(welcomeMessage);
         String phoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber().substring(3);

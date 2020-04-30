@@ -1,4 +1,4 @@
-package org.covid19india.android.safepassageindia.passissuer;
+package org.covid19india.android.safepassageindia.passissuer.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.EditText;
 
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.passissuer.OrgUserInfo;
 
 public class OrgFormActivity extends AppCompatActivity {
     public static final String USER_INFO = "org.covid19india.android.safepassageindia.passissue.USER_INFO";

@@ -3,14 +3,14 @@
 
     <application>
         <activity
-            android:name="org.covid19india.android.safepassageindia.passissuer.MenuActivity"
+            android:name="org.covid19india.android.safepassageindia.passissuer.activity.MenuActivity"
             android:label="MenuActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name="org.covid19india.android.safepassageindia.passissuer.PassIssuerListActivity"
+            android:name="org.covid19india.android.safepassageindia.passissuer.activity.PassIssuerListActivity"
             android:label="@string/title_activity_pass_issuer_list"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name="org.covid19india.android.safepassageindia.passissuer.OrgFormActivity" />
+        <activity android:name="org.covid19india.android.safepassageindia.passissuer.activity.OrgFormActivity" />
     </application>
 
 </manifest>

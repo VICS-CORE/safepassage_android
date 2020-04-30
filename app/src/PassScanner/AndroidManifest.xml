@@ -8,9 +8,9 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application>
-        <activity android:name="org.covid19india.android.safepassageindia.passscanner.ResultActivity"></activity>
-        <activity android:name="org.covid19india.android.safepassageindia.passscanner.ScannerActivity" />
-        <activity android:name="org.covid19india.android.safepassageindia.passscanner.MenuActivity" />
+        <activity android:name="org.covid19india.android.safepassageindia.passscanner.activity.ResultActivity"></activity>
+        <activity android:name="org.covid19india.android.safepassageindia.passscanner.activity.ScannerActivity" />
+        <activity android:name="org.covid19india.android.safepassageindia.passscanner.activity.MenuActivity" />
     </application>
 
 </manifest>

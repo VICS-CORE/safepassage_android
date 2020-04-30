@@ -1,4 +1,4 @@
-package org.covid19india.android.safepassageindia;
+package org.covid19india.android.safepassageindia.activity;
 
 import android.content.Intent;
 import android.os.Build;
@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.model.Pass;
 import org.covid19india.android.safepassageindia.model.User;
 
