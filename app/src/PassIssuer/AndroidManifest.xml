@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application>
+        <activity android:name="org.covid19india.android.safepassageindia.passissuer.activity.CameraActivity"></activity>
         <activity
             android:name="org.covid19india.android.safepassageindia.passissuer.activity.MenuActivity"
             android:label="MenuActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="org.covid19india.android.safepassageindia.passissuer.activity.PassIssuerListActivity"
             android:label="@string/title_activity_pass_issuer_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="org.covid19india.android.safepassageindia.passissuer.activity.OrgFormActivity" />
     </application>
 
