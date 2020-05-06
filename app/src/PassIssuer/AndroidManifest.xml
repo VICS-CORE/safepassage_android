@@ -3,8 +3,12 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application>
-        <activity android:name="org.covid19india.android.safepassageindia.passissuer.activity.CameraActivity"></activity>
+        <activity
+            android:name="org.covid19india.android.safepassageindia.passissuer.activity.FormActivity"
+            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar" />
+        <activity android:name="org.covid19india.android.safepassageindia.passissuer.activity.CameraActivity" />
         <activity
             android:name="org.covid19india.android.safepassageindia.passissuer.activity.MenuActivity"
             android:label="MenuActivity"

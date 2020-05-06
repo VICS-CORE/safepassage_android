@@ -36,7 +36,8 @@ public class MenuActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().getCurrentUser().getIdToken(false).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
             @Override
             public void onSuccess(GetTokenResult getTokenResult) {
-                Log.d(TAG, "TokenId = " + getTokenResult.getToken());
+                String token = getTokenResult.getToken();
+                Log.d(TAG, "TokenId = " + token);
             }
         });
         /*textView = findViewById(R.id.welcome_text);

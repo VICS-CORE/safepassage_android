@@ -4,9 +4,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.Environment;
+import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
 import android.view.Surface;
@@ -18,7 +17,7 @@ import android.widget.Toast;
 
 import org.covid19india.android.safepassageindia.R;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +34,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 public class CameraActivity extends AppCompatActivity {
+    private static final String TAG = "CameraActivity";
     private int REQUEST_CODE_PERMISSIONS = 10; //arbitrary number, can be changed accordingly
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"}; //array w/ permissions from manifest
     TextureView textureView;
@@ -90,16 +90,27 @@ public class CameraActivity extends AppCompatActivity {
         findViewById(R.id.btn_capture).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File folder = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham");
-                folder.mkdir();
-                File file = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham/" + System.currentTimeMillis() + ".jpg");
+//                File folder = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham");
+//                folder.mkdir();
+//                File file = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham/" + System.currentTimeMillis() + ".jpg");
                 imgCap.takePicture(new ImageCapture.OnImageCapturedListener() {
                     @Override
                     public void onCaptureSuccess(ImageProxy image, int rotationDegrees) {
                         super.onCaptureSuccess(image, rotationDegrees);
-                        Image image1 = image.getImage();
                         Bitmap bitmap = textureView.getBitmap();
-                        Intent intent = new Intent();
+                        bitmap = getResizedBitmap(bitmap, 500);
+
+                        //Converting to byte array
+                        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bStream);
+                        byte[] byteArray = bStream.toByteArray();
+                        Log.d(TAG, String.valueOf(byteArray.length));
+
+                        //Starting Form Activity
+                        Intent intent = new Intent(CameraActivity.this, FormActivity.class);
+                        intent.putExtra("form_type", "pass");
+                        intent.putExtra("image", byteArray);
+                        startActivity(intent);
                     }
 
                     @Override
@@ -204,5 +215,20 @@ public class CameraActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 }
