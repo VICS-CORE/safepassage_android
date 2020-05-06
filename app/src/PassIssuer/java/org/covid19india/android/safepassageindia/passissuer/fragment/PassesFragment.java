@@ -1,11 +1,14 @@
 package org.covid19india.android.safepassageindia.passissuer.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.passissuer.activity.CameraActivity;
 
 import androidx.fragment.app.Fragment;
 
@@ -15,6 +18,7 @@ import androidx.fragment.app.Fragment;
  * create an instance of this fragment.
  */
 public class PassesFragment extends Fragment {
+    private Button newPassButton;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -59,6 +63,18 @@ public class PassesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_passes, container, false);
+        View view = inflater.inflate(R.layout.fragment_passes, container, false);
+        init(view);
+        return view;
+    }
+
+    private void init(View view) {
+        newPassButton = view.findViewById(R.id.btn_new_pass);
+        newPassButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(view.getContext(), CameraActivity.class));
+            }
+        });
     }
 }
