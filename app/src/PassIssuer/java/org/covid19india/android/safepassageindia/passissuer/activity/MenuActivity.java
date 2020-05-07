@@ -11,7 +11,7 @@ import com.google.firebase.auth.GetTokenResult;
 
 import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.RetrofitClient;
-import org.covid19india.android.safepassageindia.UserApi;
+import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.passissuer.adapter.SectionsPagerAdapter;
 import org.covid19india.android.safepassageindia.passissuer.fragment.PassesFragment;
 import org.covid19india.android.safepassageindia.passissuer.fragment.TeamsFragment;
@@ -36,7 +36,6 @@ public class MenuActivity extends AppCompatActivity {
     ViewPager viewPager;
     TabLayout tabLayout;
     SectionsPagerAdapter pagerAdapter;
-    Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,35 +47,8 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onSuccess(GetTokenResult getTokenResult) {
                 String token = getTokenResult.getToken();
-                RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token);
-                retrofit = RetrofitClient.getClient(UserApi.BASE_URL);
-                UserApi userApi = retrofit.create(UserApi.class);
-                userApi.sessionLogin(idToken).enqueue(new Callback<List<String>>() {
-                    @Override
-                    public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                        Log.d(TAG, "Response Code: " + response.code());
-                        if (response.isSuccessful()) {
-                            Toast.makeText(MenuActivity.this, "Successfully posted", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie"));
-                            List<String> message = response.body();
-                            Log.d(TAG, message.get(0));
-                        } else {
-                            try {
-                                JSONObject jObjError = new JSONObject(response.errorBody().string());
-                                Log.d(TAG, jObjError.get("detail").toString());
-                            } catch (Exception e) {
-                                Log.d(TAG, e.getMessage());
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<String>> call, Throwable t) {
-                        Log.d(TAG, "Failure\n" + t.getMessage());
-                        t.printStackTrace();
-                    }
-                });
                 Log.d(TAG, "TokenId = " + token);
+                callApi(token);
             }
         });
         /*textView = findViewById(R.id.welcome_text);
@@ -90,6 +62,37 @@ public class MenuActivity extends AppCompatActivity {
                 finish();
             }
         });*/
+    }
+
+    private void callApi(String token) {
+        RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token);
+        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
+        ServerApi serverApi = retrofit.create(ServerApi.class);
+        serverApi.sessionLogin(idToken).enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                Log.d(TAG, "Response Code: " + response.code());
+                if (response.isSuccessful()) {
+                    Toast.makeText(MenuActivity.this, "Successfully posted", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie"));
+                    List<String> message = response.body();
+                    Log.d(TAG, message.get(0));
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Log.d(TAG, jObjError.get("detail").toString());
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Log.d(TAG, "Failure\n" + t.getMessage());
+                t.printStackTrace();
+            }
+        });
     }
 
     private void setViewPager() {

@@ -18,15 +18,21 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import org.covid19india.android.safepassageindia.R;
-import org.covid19india.android.safepassageindia.UserApi;
+import org.covid19india.android.safepassageindia.RetrofitClient;
+import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.model.PassList;
 import org.covid19india.android.safepassageindia.model.User;
 import org.covid19india.android.safepassageindia.model.UserList;
 import org.covid19india.android.safepassageindia.passuser.adapter.PassAdapter;
+import org.json.JSONObject;
+
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -58,7 +64,9 @@ public class MenuActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().getCurrentUser().getIdToken(false).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
             @Override
             public void onSuccess(GetTokenResult getTokenResult) {
-                Log.d(TAG, "TokenId = " + getTokenResult.getToken());
+                String token = getTokenResult.getToken();
+                Log.d(TAG, "TokenId = " + token);
+                callApi(token);
             }
         });
         String welcomeMessage = "Welcome " + FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
@@ -76,15 +84,44 @@ public class MenuActivity extends AppCompatActivity {
             }
         });*/
     }
+    private void callApi(String token) {
+        RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token);
+        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
+        ServerApi serverApi = retrofit.create(ServerApi.class);
+        serverApi.sessionLogin(idToken).enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                Log.d(TAG, "Response Code: " + response.code());
+                if (response.isSuccessful()) {
+                    Toast.makeText(MenuActivity.this, "Successfully posted", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie"));
+                    List<String> message = response.body();
+                    Log.d(TAG, message.get(0));
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Log.d(TAG, jObjError.get("detail").toString());
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
+            }
 
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Log.d(TAG, "Failure\n" + t.getMessage());
+                t.printStackTrace();
+            }
+        });
+    }
     private void requestPassApi(String phoneNumber) {
         passProgressBar.setVisibility(View.VISIBLE);
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(UserApi.BASE_URL)
+                .baseUrl(ServerApi.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        UserApi userApi = retrofit.create(UserApi.class);
-        Call<PassList> passListCall = userApi.getPasses(responseFormat, phoneNumber, passType);
+        ServerApi serverApi = retrofit.create(ServerApi.class);
+        Call<PassList> passListCall = serverApi.getPasses(responseFormat, phoneNumber, passType);
         passListCall.enqueue(new Callback<PassList>() {
             @Override
             public void onResponse(Call<PassList> call, Response<PassList> response) {
@@ -115,11 +152,11 @@ public class MenuActivity extends AppCompatActivity {
 
     private void requestUserApi(String phoneNumber) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(UserApi.BASE_URL)
+                .baseUrl(ServerApi.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        UserApi userApi = retrofit.create(UserApi.class);
-        Call<UserList> userListCall = userApi.getUsers(responseFormat, phoneNumber, userType);
+        ServerApi serverApi = retrofit.create(ServerApi.class);
+        Call<UserList> userListCall = serverApi.getUsers(responseFormat, phoneNumber, userType);
         final String finalPhoneNumber = phoneNumber;
         userListCall.enqueue(new Callback<UserList>() {
             @Override

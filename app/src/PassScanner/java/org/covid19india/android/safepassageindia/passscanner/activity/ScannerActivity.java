@@ -21,7 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.zxing.Result;
 
 import org.covid19india.android.safepassageindia.R;
-import org.covid19india.android.safepassageindia.UserApi;
+import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.model.UserPassList;
 
 import androidx.annotation.NonNull;
@@ -122,11 +122,11 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             return;
         }
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(UserApi.BASE_URL)
+                .baseUrl(ServerApi.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        UserApi userApi = retrofit.create(UserApi.class);
-        Call<UserPassList> passListCall = userApi.getUserPasses(responseFormat, content, userType);
+        ServerApi serverApi = retrofit.create(ServerApi.class);
+        Call<UserPassList> passListCall = serverApi.getUserPasses(responseFormat, content, userType);
         passListCall.enqueue(new Callback<UserPassList>() {
             @Override
             public void onResponse(Call<UserPassList> call, Response<UserPassList> response) {

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,9 +14,20 @@ import com.google.firebase.auth.GetTokenResult;
 
 import org.covid19india.android.safepassageindia.BroadcastReceiverService;
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.RetrofitClient;
+import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.activity.LoginActivity;
+import org.json.JSONObject;
+
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MenuActivity extends AppCompatActivity {
     private static final String TAG = "MenuActivity";
@@ -30,7 +42,9 @@ public class MenuActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().getCurrentUser().getIdToken(false).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
             @Override
             public void onSuccess(GetTokenResult getTokenResult) {
-                Log.d(TAG, "TokenId = " + getTokenResult.getToken());
+                String token = getTokenResult.getToken();
+                Log.d(TAG, "TokenId = " + token);
+                callApi(token);
             }
         });
         String welcomeMessage = "Welcome " + FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
@@ -57,6 +71,37 @@ public class MenuActivity extends AppCompatActivity {
         textView = findViewById(R.id.welcome_text);
         scanButton = findViewById(R.id.scan_button);
 //        signOutButton = findViewById(R.id.sign_out);
+    }
+
+    private void callApi(String token) {
+        RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token);
+        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
+        ServerApi serverApi = retrofit.create(ServerApi.class);
+        serverApi.sessionLogin(idToken).enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                Log.d(TAG, "Response Code: " + response.code());
+                if (response.isSuccessful()) {
+                    Toast.makeText(MenuActivity.this, "Successfully posted", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie"));
+                    List<String> message = response.body();
+                    Log.d(TAG, message.get(0));
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        Log.d(TAG, jObjError.get("detail").toString());
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Log.d(TAG, "Failure\n" + t.getMessage());
+                t.printStackTrace();
+            }
+        });
     }
 
     @Override

@@ -14,7 +14,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
 
-public interface UserApi {
+public interface ServerApi {
     String BASE_URL = "http://34.69.21.192";
 
     @GET("/user/")
