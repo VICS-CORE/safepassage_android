@@ -47,6 +47,7 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onSuccess(GetTokenResult getTokenResult) {
                 String token = getTokenResult.getToken();
+                Log.d(TAG, "Phone number: " + FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
                 Log.d(TAG, "TokenId = " + token);
                 callApi(token);
             }
@@ -76,6 +77,7 @@ public class MenuActivity extends AppCompatActivity {
                     Toast.makeText(MenuActivity.this, "Successfully posted", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie"));
                     List<String> message = response.body();
+                    //https://www.youtube.com/watch?v=dh86zr4C2zg
                     Log.d(TAG, message.get(0));
                 } else {
                     try {

@@ -231,4 +231,20 @@ public class CameraActivity extends AppCompatActivity {
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        CameraX.unbindAll();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (allPermissionsGranted()) {
+            startCamera(); //start camera if permission has been granted by user
+        } else {
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+        }
+    }
 }
