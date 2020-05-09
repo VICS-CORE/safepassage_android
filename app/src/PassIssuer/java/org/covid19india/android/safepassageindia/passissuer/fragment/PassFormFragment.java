@@ -44,6 +44,7 @@ public class PassFormFragment extends Fragment {
     private TextInputEditText fromTimeEdit;
     private TextInputEditText tillDateEdit;
     private TextInputEditText tillTimeEdit;
+    private Calendar start;
     private static final String[] types = {"Pass Type", "Daily pass", "Permanent pass", "One Time pass"};
 
     public PassFormFragment() {
@@ -132,7 +133,15 @@ public class PassFormFragment extends Fragment {
                 TimePickerDialog dialog = new TimePickerDialog(view.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                        String timeFormat = hour + ":" + minute;
+                        String setHour = hour + "";
+                        String setMinute = minute + "";
+                        if (hour < 10) {
+                            setHour = "0" + setHour;
+                        }
+                        if (minute < 10) {
+                            setMinute = "0" + setMinute;
+                        }
+                        String timeFormat = setHour + ":" + setMinute;
                         editText2.setText(timeFormat);
                     }
                 }, hour, minute, false);

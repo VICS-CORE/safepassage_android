@@ -12,7 +12,8 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btn_done">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -22,13 +23,22 @@
                 <ImageView
                     android:id="@+id/user_pic"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_phone"
                     style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
                     android:textColorHint="@android:color/darker_gray"
                     app:boxStrokeColor="@android:color/white"
                     app:hintTextColor="@android:color/white">
@@ -48,6 +58,10 @@
                     style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
                     android:textColorHint="@android:color/darker_gray"
                     app:boxStrokeColor="@android:color/white"
                     app:hintTextColor="@android:color/white">
@@ -65,7 +79,10 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/spinner_border">
 
                     <Spinner
@@ -79,6 +96,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
                     android:text="From:"
                     android:textColor="@android:color/white"
                     android:textSize="18sp" />
@@ -90,6 +111,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
                     android:text="Till:"
                     android:textColor="@android:color/white"
                     android:textSize="18sp" />
@@ -103,6 +128,10 @@
                     style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
                     android:textColorHint="@android:color/darker_gray"
                     app:boxStrokeColor="@android:color/white"
                     app:hintTextColor="@android:color/white">
@@ -122,6 +151,10 @@
                     style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
                     android:textColorHint="@android:color/darker_gray"
                     app:boxStrokeColor="@android:color/white"
                     app:hintTextColor="@android:color/white">
@@ -141,6 +174,10 @@
                     style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
                     android:textColorHint="@android:color/darker_gray"
                     app:boxStrokeColor="@android:color/white"
                     app:hintTextColor="@android:color/white">
@@ -160,6 +197,10 @@
                     style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
                     android:textColorHint="@android:color/darker_gray"
                     app:boxStrokeColor="@android:color/white"
                     app:hintTextColor="@android:color/white">
@@ -175,5 +216,20 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </ScrollView>
+
+        <Button
+            android:id="@+id/btn_done"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/blue_button"
+            android:text="Done"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
     </RelativeLayout>
 </FrameLayout>
