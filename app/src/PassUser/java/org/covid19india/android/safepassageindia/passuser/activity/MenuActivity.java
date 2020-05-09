@@ -1,5 +1,8 @@
 package org.covid19india.android.safepassageindia.passuser.activity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +23,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.RetrofitClient;
 import org.covid19india.android.safepassageindia.ServerApi;
+import org.covid19india.android.safepassageindia.activity.LoginActivity;
 import org.covid19india.android.safepassageindia.model.PassList;
 import org.covid19india.android.safepassageindia.model.User;
 import org.covid19india.android.safepassageindia.model.UserList;
@@ -37,7 +41,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
@@ -55,6 +58,7 @@ public class MenuActivity extends AppCompatActivity {
     private static final String responseFormat = "json";
     private static final String userType = "1";
     private static final String passType = "4";
+    private String phoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +75,9 @@ public class MenuActivity extends AppCompatActivity {
         });
         String welcomeMessage = "Welcome " + FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
         textView.setText(welcomeMessage);
-        String phoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber().substring(3);
+        phoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber().substring(3);
 //        phoneNumber = "9488834767";
         generateQR(phoneNumber);
-        requestUserApi(phoneNumber);
         /*signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,44 +87,60 @@ public class MenuActivity extends AppCompatActivity {
             }
         });*/
     }
+
     private void callApi(String token) {
-        RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token);
-        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
-        ServerApi serverApi = retrofit.create(ServerApi.class);
-        serverApi.sessionLogin(idToken).enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                Log.d(TAG, "Response Code: " + response.code());
-                if (response.isSuccessful()) {
-                    Toast.makeText(MenuActivity.this, "Successfully posted", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie"));
-                    List<String> message = response.body();
-                    Log.d(TAG, message.get(0));
-                } else {
-                    try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Log.d(TAG, jObjError.get("detail").toString());
-                    } catch (Exception e) {
-                        Log.d(TAG, e.getMessage());
+        if (RetrofitClient.isEmpty(getApplicationContext())) {
+            Log.d(TAG, "Creating new Session");
+            RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token);
+            Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
+            ServerApi serverApi = retrofit.create(ServerApi.class);
+            serverApi.sessionLogin(idToken).enqueue(new Callback<List<String>>() {
+                @Override
+                public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                    Log.d(TAG, "Response Code: " + response.code());
+                    if (response.isSuccessful() && response.code() == 200) {
+                        List<String> message = response.body();
+                        RetrofitClient.storeCookie(getApplicationContext(), response.headers().get("Set-Cookie"));
+                        Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie") + "\nMessage: " + message.get(0));
+                        requestUserApi(phoneNumber);
+                    } else {
+                        try {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            Log.d(TAG, jObjError.get("detail").toString());
+                        } catch (Exception e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+                        logOut();
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-                Log.d(TAG, "Failure\n" + t.getMessage());
-                t.printStackTrace();
+                @Override
+                public void onFailure(Call<List<String>> call, Throwable t) {
+                    Log.d(TAG, "Failure\n" + t.getMessage());
+                    t.printStackTrace();
+                    logOut();
+                }
+            });
+        } else {
+            if (RetrofitClient.isExpired(getApplicationContext())) {
+                Log.d(TAG, "Session Expired!");
+                RetrofitClient.removeCookie(getApplicationContext());
+                logOut();
+            } else {
+                Log.d(TAG, "Session already present");
+                requestUserApi(phoneNumber);
             }
-        });
+        }
     }
+
     private void requestPassApi(String phoneNumber) {
         passProgressBar.setVisibility(View.VISIBLE);
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ServerApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
         ServerApi serverApi = retrofit.create(ServerApi.class);
-        Call<PassList> passListCall = serverApi.getPasses(responseFormat, phoneNumber, passType);
+
+        SharedPreferences sf = getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        String cookie = sf.getString("Set-Cookie", "NA");
+        Call<PassList> passListCall = serverApi.getPasses(cookie, responseFormat, phoneNumber, passType);
         passListCall.enqueue(new Callback<PassList>() {
             @Override
             public void onResponse(Call<PassList> call, Response<PassList> response) {
@@ -151,12 +170,12 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void requestUserApi(String phoneNumber) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ServerApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
         ServerApi serverApi = retrofit.create(ServerApi.class);
-        Call<UserList> userListCall = serverApi.getUsers(responseFormat, phoneNumber, userType);
+
+        SharedPreferences sf = getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        String cookie = sf.getString("Set-Cookie", "NA");
+        Call<UserList> userListCall = serverApi.getUsers(cookie, responseFormat, phoneNumber, userType);
         final String finalPhoneNumber = phoneNumber;
         userListCall.enqueue(new Callback<UserList>() {
             @Override
@@ -218,6 +237,12 @@ public class MenuActivity extends AppCompatActivity {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
         return bitmap;
+    }
+
+    private void logOut() {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(MenuActivity.this, LoginActivity.class));
+        finish();
     }
 
     @Override

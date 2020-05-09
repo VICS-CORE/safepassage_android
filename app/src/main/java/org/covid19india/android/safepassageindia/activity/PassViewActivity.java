@@ -62,6 +62,7 @@ public class PassViewActivity extends AppCompatActivity {
         String passStatus = passValidity.get(pass.getPass_validityState());
         String name = user.getUser_firstName() + (user.getUser_middleName().equals("") ? " " : " " + user.getUser_middleName() + " ") + user.getUser_lastName();
         String phoneNumber = user.getUser_phoneNumber();
+        String reason = pass.getPass_reason();
         String type = "";
         String startDate = "";
         String endDate = "";
@@ -107,6 +108,7 @@ public class PassViewActivity extends AppCompatActivity {
 
         //Final Content
         String content = "Pass Status: " + passStatus + "\n"
+                + "Reason: " + reason + "\n"
                 + "Pass Type: " + type + "\n"
                 + "From: " + startDate + "\n"
                 + "Upto: " + endDate + "\n"

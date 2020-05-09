@@ -1,8 +1,8 @@
 package org.covid19india.android.safepassageindia.passissuer.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayout;
@@ -12,11 +12,13 @@ import com.google.firebase.auth.GetTokenResult;
 import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.RetrofitClient;
 import org.covid19india.android.safepassageindia.ServerApi;
+import org.covid19india.android.safepassageindia.activity.LoginActivity;
 import org.covid19india.android.safepassageindia.passissuer.adapter.SectionsPagerAdapter;
 import org.covid19india.android.safepassageindia.passissuer.fragment.PassesFragment;
 import org.covid19india.android.safepassageindia.passissuer.fragment.TeamsFragment;
 import org.json.JSONObject;
 
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,35 +68,50 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void callApi(String token) {
-        RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token);
-        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
-        ServerApi serverApi = retrofit.create(ServerApi.class);
-        serverApi.sessionLogin(idToken).enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                Log.d(TAG, "Response Code: " + response.code());
-                if (response.isSuccessful()) {
-                    Toast.makeText(MenuActivity.this, "Successfully posted", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie"));
-                    List<String> message = response.body();
-                    //https://www.youtube.com/watch?v=dh86zr4C2zg
-                    Log.d(TAG, message.get(0));
-                } else {
-                    try {
-                        JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        Log.d(TAG, jObjError.get("detail").toString());
-                    } catch (Exception e) {
-                        Log.d(TAG, e.getMessage());
+        if (RetrofitClient.isEmpty(getApplicationContext())) {
+            Log.d(TAG, "Creating new Session");
+            RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token);
+            Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
+            ServerApi serverApi = retrofit.create(ServerApi.class);
+            serverApi.sessionLogin(idToken).enqueue(new Callback<List<String>>() {
+                @Override
+                public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                    Log.d(TAG, "Response Code: " + response.code());
+                    if (response.isSuccessful() && response.code() == 200) {
+                        List<String> message = response.body();
+                        RetrofitClient.storeCookie(getApplicationContext(), response.headers().get("Set-Cookie"));
+                        HttpCookie cookie = new HttpCookie("hi", "hello");
+                        String value = cookie.getValue();
+                        String name = cookie.getName();
+
+                        Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie") + "\nMessage: " + message.get(0));
+                    } else {
+                        try {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            Log.d(TAG, jObjError.get("detail").toString());
+                        } catch (Exception e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+                        logOut();
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-                Log.d(TAG, "Failure\n" + t.getMessage());
-                t.printStackTrace();
+                @Override
+                public void onFailure(Call<List<String>> call, Throwable t) {
+                    Log.d(TAG, "Failure\n" + t.getMessage());
+                    t.printStackTrace();
+                    logOut();
+                }
+            });
+        } else {
+            if (RetrofitClient.isExpired(getApplicationContext())) {
+                Log.d(TAG, "Session Expired!");
+                RetrofitClient.removeCookie(getApplicationContext());
+                logOut();
+            } else {
+                Log.d(TAG, "Session already present");
             }
-        });
+        }
     }
 
     private void setViewPager() {
@@ -114,6 +131,12 @@ public class MenuActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.view_pager);
         tabLayout = findViewById(R.id.tabs);
         pagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, this, null, null);
+    }
+
+    private void logOut() {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(MenuActivity.this, LoginActivity.class));
+        finish();
     }
 
     @Override

@@ -18,6 +18,8 @@ public class Pass implements Parcelable {
     private String pass_expiryDate;
     @SerializedName("pass_validitystate")
     private Integer pass_validityState;
+    @SerializedName("pass_updatedon")
+    private String pass_updatedOn;
     @SerializedName("pass_zipcode")
     private String pass_zipCode;
     @SerializedName("pass_radius")
@@ -140,13 +142,14 @@ public class Pass implements Parcelable {
         this.pass_updatedBy = pass_updatedBy;
     }
 
-    public Pass(Integer pass_id, String pass_type, String pass_reason, String pass_createdOn, String pass_expiryDate, Integer pass_validityState, String pass_zipCode, String pass_radius, String pass_medicalVerification, Integer pass_issuedBy, Integer pass_issuedTo, Integer pass_createdBy, Integer pass_updatedBy) {
+    public Pass(Integer pass_id, String pass_type, String pass_reason, String pass_createdOn, String pass_expiryDate, Integer pass_validityState, String pass_updatedOn, String pass_zipCode, String pass_radius, String pass_medicalVerification, Integer pass_issuedBy, Integer pass_issuedTo, Integer pass_createdBy, Integer pass_updatedBy) {
         this.pass_id = pass_id;
         this.pass_type = pass_type;
         this.pass_reason = pass_reason;
         this.pass_createdOn = pass_createdOn;
         this.pass_expiryDate = pass_expiryDate;
         this.pass_validityState = pass_validityState;
+        this.pass_updatedOn = pass_updatedOn;
         this.pass_zipCode = pass_zipCode;
         this.pass_radius = pass_radius;
         this.pass_medicalVerification = pass_medicalVerification;
@@ -155,6 +158,7 @@ public class Pass implements Parcelable {
         this.pass_createdBy = pass_createdBy;
         this.pass_updatedBy = pass_updatedBy;
     }
+
 
     @Override
     public int describeContents() {
@@ -169,6 +173,7 @@ public class Pass implements Parcelable {
         dest.writeString(this.pass_createdOn);
         dest.writeString(this.pass_expiryDate);
         dest.writeValue(this.pass_validityState);
+        dest.writeString(this.pass_updatedOn);
         dest.writeString(this.pass_zipCode);
         dest.writeString(this.pass_radius);
         dest.writeString(this.pass_medicalVerification);
@@ -185,6 +190,7 @@ public class Pass implements Parcelable {
         this.pass_createdOn = in.readString();
         this.pass_expiryDate = in.readString();
         this.pass_validityState = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.pass_updatedOn = in.readString();
         this.pass_zipCode = in.readString();
         this.pass_radius = in.readString();
         this.pass_medicalVerification = in.readString();
@@ -194,7 +200,7 @@ public class Pass implements Parcelable {
         this.pass_updatedBy = (Integer) in.readValue(Integer.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<Pass> CREATOR = new Parcelable.Creator<Pass>() {
+    public static final Creator<Pass> CREATOR = new Creator<Pass>() {
         @Override
         public Pass createFromParcel(Parcel source) {
             return new Pass(source);

@@ -1,6 +1,8 @@
 package org.covid19india.android.safepassageindia.passscanner.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.zxing.Result;
 
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.RetrofitClient;
 import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.model.UserPassList;
 
@@ -33,7 +36,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.Manifest.permission.CAMERA;
 
@@ -121,12 +123,12 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             scannerView.resumeCameraPreview(ScannerActivity.this);
             return;
         }
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ServerApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
         ServerApi serverApi = retrofit.create(ServerApi.class);
-        Call<UserPassList> passListCall = serverApi.getUserPasses(responseFormat, content, userType);
+
+        SharedPreferences sf = getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        String cookie = sf.getString("Set-Cookie", "NA");
+        Call<UserPassList> passListCall = serverApi.getUserPasses(cookie, responseFormat, content, userType);
         passListCall.enqueue(new Callback<UserPassList>() {
             @Override
             public void onResponse(Call<UserPassList> call, Response<UserPassList> response) {
