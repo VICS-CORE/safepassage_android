@@ -2,6 +2,7 @@ package org.covid19india.android.safepassageindia.passissuer.fragment;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.icu.util.Calendar;
@@ -18,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.android.material.internal.CheckableImageButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -39,6 +41,7 @@ public class PassFormFragment extends Fragment {
 
     private Bitmap bitmap;
     private ImageView userImage;
+    private View fromLayout, tillLayout;
     private Spinner spinner;
     private TextInputEditText fromDateEdit;
     private TextInputEditText fromTimeEdit;
@@ -75,15 +78,21 @@ public class PassFormFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pass_form, container, false);
         init(view);
         setTypeSpinner(view);
-        View fromLayout = view.findViewById(R.id.from_layout);
+
+        fromLayout = view.findViewById(R.id.from_layout);
+        tillLayout = view.findViewById(R.id.till_layout);
         setDateAndTimePicker((TextInputLayout) fromLayout.findViewById(R.id.date_picker), fromDateEdit, (TextInputLayout) fromLayout.findViewById(R.id.time_picker), fromTimeEdit);
-        View tillLayout = view.findViewById(R.id.till_layout);
         setDateAndTimePicker((TextInputLayout) tillLayout.findViewById(R.id.date_picker), tillDateEdit, (TextInputLayout) tillLayout.findViewById(R.id.time_picker), tillTimeEdit);
         return view;
     }
@@ -94,6 +103,7 @@ public class PassFormFragment extends Fragment {
         dateInputLayout.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((CheckableImageButton) view).setEnabled(false);
                 int day, month, year;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Calendar calendar = Calendar.getInstance();
@@ -109,17 +119,25 @@ public class PassFormFragment extends Fragment {
                 DatePickerDialog dialog = new DatePickerDialog(view.getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                        ((TextInputLayout) fromLayout.findViewById(R.id.date_picker)).setEnabled(true);
                         String dateFormat = day + "/" + (month + 1) + "/" + year;
                         editText1.setText(dateFormat);
                     }
                 }, year, month, day);
                 dialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        ((TextInputLayout) fromLayout.findViewById(R.id.date_picker)).setEnabled(true);
+                    }
+                });
                 dialog.show();
             }
         });
         timeInputLayout.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((CheckableImageButton) view).setEnabled(false);
                 int hour, minute;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Calendar calendar = Calendar.getInstance();
@@ -133,6 +151,7 @@ public class PassFormFragment extends Fragment {
                 TimePickerDialog dialog = new TimePickerDialog(view.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+                        ((TextInputLayout) fromLayout.findViewById(R.id.time_picker)).setEnabled(true);
                         String setHour = hour + "";
                         String setMinute = minute + "";
                         if (hour < 10) {
@@ -145,6 +164,12 @@ public class PassFormFragment extends Fragment {
                         editText2.setText(timeFormat);
                     }
                 }, hour, minute, false);
+                dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        ((TextInputLayout) fromLayout.findViewById(R.id.time_picker)).setEnabled(true);
+                    }
+                });
                 dialog.show();
             }
         });

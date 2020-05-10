@@ -25,7 +25,6 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
-        displayPasses();
     }
 
     private void displayPasses() {
@@ -55,5 +54,6 @@ public class ResultActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             finish();
         }
+        displayPasses();
     }
 }

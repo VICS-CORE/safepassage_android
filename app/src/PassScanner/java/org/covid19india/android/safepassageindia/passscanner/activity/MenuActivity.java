@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -18,7 +19,6 @@ import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.activity.LoginActivity;
 import org.json.JSONObject;
 
-import java.net.HttpCookie;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +32,8 @@ import retrofit2.Retrofit;
 public class MenuActivity extends AppCompatActivity {
     private static final String TAG = "MenuActivity";
     TextView textView;
+    ProgressBar progressBar;
+    View view;
     Button scanButton, signOutButton;
 
     @Override
@@ -47,11 +49,14 @@ public class MenuActivity extends AppCompatActivity {
                 callApi(token);
             }
         });
+
         String welcomeMessage = "Welcome " + FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
         textView.setText(welcomeMessage);
+
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((Button) view).setEnabled(false);
                 startActivity(new Intent(MenuActivity.this, ScannerActivity.class));
             }
         });
@@ -70,14 +75,18 @@ public class MenuActivity extends AppCompatActivity {
     private void init() {
         textView = findViewById(R.id.welcome_text);
         scanButton = findViewById(R.id.scan_button);
+        progressBar = findViewById(R.id.menu_progress);
+        view = findViewById(R.id.parent_relativeLayout);
 //        signOutButton = findViewById(R.id.sign_out);
     }
 
     private void callApi(String token) {
+        progressBar.setVisibility(View.VISIBLE);
+        view.setVisibility(View.GONE);
         if (RetrofitClient.isEmpty(getApplicationContext())) {
             Log.d(TAG, "Creating new Session");
-            RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token);
             Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
+            RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token); //Adding idToken to RequestBody
             ServerApi serverApi = retrofit.create(ServerApi.class);
             serverApi.sessionLogin(idToken).enqueue(new Callback<List<String>>() {
                 @Override
@@ -86,9 +95,11 @@ public class MenuActivity extends AppCompatActivity {
                     if (response.isSuccessful() && response.code() == 200) {
                         List<String> message = response.body();
                         RetrofitClient.storeCookie(getApplicationContext(), response.headers().get("Set-Cookie"));
-                        HttpCookie cookie = new HttpCookie("hi", "hello");
-                        String value = cookie.getValue();
-                        String name = cookie.getName();
+                        progressBar.setVisibility(View.GONE);
+                        view.setVisibility(View.VISIBLE);
+//                        HttpCookie cookie = new HttpCookie("hi", "hello");
+//                        String value = cookie.getValue();
+//                        String name = cookie.getName();
 
                         Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie") + "\nMessage: " + message.get(0));
                     } else {
@@ -106,6 +117,7 @@ public class MenuActivity extends AppCompatActivity {
                 public void onFailure(Call<List<String>> call, Throwable t) {
                     Log.d(TAG, "Failure\n" + t.getMessage());
                     t.printStackTrace();
+                    logOut();
                 }
             });
         } else {
@@ -114,6 +126,8 @@ public class MenuActivity extends AppCompatActivity {
                 RetrofitClient.removeCookie(getApplicationContext());
                 logOut();
             } else {
+                progressBar.setVisibility(View.GONE);
+                view.setVisibility(View.VISIBLE);
                 Log.d(TAG, "Session already present");
             }
         }
@@ -134,6 +148,7 @@ public class MenuActivity extends AppCompatActivity {
             startActivity(new Intent(MenuActivity.this, LoginActivity.class));
             finish();
         }
+        scanButton.setEnabled(true);
     }
 
     @Override

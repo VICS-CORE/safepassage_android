@@ -68,11 +68,18 @@ public class PassesFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        newPassButton.setEnabled(true);
+    }
+
     private void init(View view) {
         newPassButton = view.findViewById(R.id.btn_new_pass);
         newPassButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((Button) view).setEnabled(false);
                 startActivity(new Intent(view.getContext(), CameraActivity.class));
             }
         });

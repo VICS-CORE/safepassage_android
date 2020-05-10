@@ -26,6 +26,7 @@ import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.RetrofitClient;
 import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.model.UserPassList;
+import org.json.JSONObject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -135,15 +136,26 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                 Log.d(TAG, "API Call success, Response code: " + response.code());
                 progressBar.setVisibility(View.GONE);
                 startVibration(200);
-                UserPassList userPassList = response.body();
-                if (userPassList != null && userPassList.isUniqueUser()) {
-                    Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
-                    intent.putExtra("userPassList", userPassList);
-                    startActivity(intent);
+                if (response.code() / 100 == 2) {
+                    UserPassList userPassList = response.body();
+                    if (userPassList != null && userPassList.isUniqueUser()) {
+                        Intent intent = new Intent(ScannerActivity.this, ResultActivity.class);
+                        intent.putExtra("userPassList", userPassList);
+                        startActivity(intent);
+                    } else {
+                        Log.d(TAG, "UserPassList is either empty or the users are not unique");
+                    }
                 } else {
-                    Toast.makeText(getApplicationContext(), "User doesn't exist", Toast.LENGTH_LONG).show();
-                    scannerView.resumeCameraPreview(ScannerActivity.this);
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        int i = 1;
+                        Log.d(TAG, jObjError.get("detail").toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+//                    Toast.makeText(getApplicationContext(), "User doesn't exist", Toast.LENGTH_LONG).show();
                 }
+                scannerView.resumeCameraPreview(ScannerActivity.this);
             }
 
             @Override

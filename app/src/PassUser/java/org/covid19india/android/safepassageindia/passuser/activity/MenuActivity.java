@@ -47,13 +47,14 @@ import static android.graphics.Color.WHITE;
 
 public class MenuActivity extends AppCompatActivity {
     private static final String TAG = "MenuActivity";
-    TextView textView;
-    ImageView imageView;
-    Button signOutButton;
-    User user;
-    ProgressBar passProgressBar;
-    PassList passList;
-    RecyclerView recyclerView;
+    private TextView textView;
+    private ImageView imageView;
+    private View parentView;
+    private Button signOutButton;
+    private User user;
+    private ProgressBar passProgressBar;
+    private PassList passList;
+    private RecyclerView recyclerView;
     private QRCodeWriter writer;
     private static final String responseFormat = "json";
     private static final String userType = "1";
@@ -73,11 +74,10 @@ public class MenuActivity extends AppCompatActivity {
                 callApi(token);
             }
         });
-        String welcomeMessage = "Welcome " + FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
-        textView.setText(welcomeMessage);
+
         phoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber().substring(3);
-//        phoneNumber = "9488834767";
         generateQR(phoneNumber);
+
         /*signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,10 +89,14 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void callApi(String token) {
+        passProgressBar.setVisibility(View.VISIBLE);
+        parentView.setVisibility(View.GONE);
         if (RetrofitClient.isEmpty(getApplicationContext())) {
             Log.d(TAG, "Creating new Session");
-            RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token);
+
             Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
+            RequestBody idToken = RequestBody.create(MediaType.parse("multipart/form-data"), token); //Adding idToken to RequestBody
+
             ServerApi serverApi = retrofit.create(ServerApi.class);
             serverApi.sessionLogin(idToken).enqueue(new Callback<List<String>>() {
                 @Override
@@ -100,8 +104,9 @@ public class MenuActivity extends AppCompatActivity {
                     Log.d(TAG, "Response Code: " + response.code());
                     if (response.isSuccessful() && response.code() == 200) {
                         List<String> message = response.body();
-                        RetrofitClient.storeCookie(getApplicationContext(), response.headers().get("Set-Cookie"));
                         Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie") + "\nMessage: " + message.get(0));
+
+                        RetrofitClient.storeCookie(getApplicationContext(), response.headers().get("Set-Cookie"));
                         requestUserApi(phoneNumber);
                     } else {
                         try {
@@ -134,23 +139,25 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void requestPassApi(String phoneNumber) {
-        passProgressBar.setVisibility(View.VISIBLE);
-        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
-        ServerApi serverApi = retrofit.create(ServerApi.class);
 
         SharedPreferences sf = getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
         String cookie = sf.getString("Set-Cookie", "NA");
+
+        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
+        ServerApi serverApi = retrofit.create(ServerApi.class);
+
         Call<PassList> passListCall = serverApi.getPasses(cookie, responseFormat, phoneNumber, passType);
         passListCall.enqueue(new Callback<PassList>() {
             @Override
             public void onResponse(Call<PassList> call, Response<PassList> response) {
                 Log.d(TAG, "API Call success, Response code: " + response.code());
                 passProgressBar.setVisibility(View.GONE);
+                parentView.setVisibility(View.VISIBLE);
                 if (response.code() == 200) {
                     passList = response.body();
                     if (passList != null) {
                         passList.renamePassType();
-                        setRecyclerView();
+                        displayPasses();
                     }
                 }
             }
@@ -159,22 +166,24 @@ public class MenuActivity extends AppCompatActivity {
             public void onFailure(Call<PassList> call, Throwable t) {
                 Log.d(TAG, "Server not accessible - pass access");
                 passProgressBar.setVisibility(View.GONE);
+                parentView.setVisibility(View.VISIBLE);
                 Toast.makeText(MenuActivity.this, "Server is not accessible", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void setRecyclerView() {
+    private void displayPasses() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new PassAdapter(passList, user));
     }
 
     private void requestUserApi(String phoneNumber) {
+        SharedPreferences sf = getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        String cookie = sf.getString("Set-Cookie", "NA");
+
         Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
         ServerApi serverApi = retrofit.create(ServerApi.class);
 
-        SharedPreferences sf = getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
-        String cookie = sf.getString("Set-Cookie", "NA");
         Call<UserList> userListCall = serverApi.getUsers(cookie, responseFormat, phoneNumber, userType);
         final String finalPhoneNumber = phoneNumber;
         userListCall.enqueue(new Callback<UserList>() {
@@ -186,6 +195,8 @@ public class MenuActivity extends AppCompatActivity {
                     if (list != null) {
                         if (list.getUsers().size() == 1) {
                             user = list.getUsers().get(0);
+                            String welcomeMessage = "Welcome " + user.getUser_firstName() + (user.getUser_middleName().isEmpty() ? " " : " " + user.getUser_middleName() + " ") + user.getUser_lastName();
+                            textView.setText(welcomeMessage);
                             requestPassApi(finalPhoneNumber);
                         }
                     }
@@ -206,6 +217,7 @@ public class MenuActivity extends AppCompatActivity {
         imageView = findViewById(R.id.qr_pic);
         recyclerView = findViewById(R.id.recycler_view);
         passProgressBar = findViewById(R.id.pass_progress);
+        parentView = findViewById(R.id.parent_scrollView);
 //        signOutButton = findViewById(R.id.sign_out);
     }
 
@@ -250,6 +262,9 @@ public class MenuActivity extends AppCompatActivity {
         super.onResume();
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             finish();
+        }
+        if (passList != null && passList.getPasses().size() != 0) {
+            displayPasses();
         }
     }
 

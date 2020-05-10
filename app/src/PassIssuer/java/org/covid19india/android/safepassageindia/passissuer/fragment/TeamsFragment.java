@@ -1,7 +1,7 @@
 package org.covid19india.android.safepassageindia.passissuer.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +69,7 @@ public class TeamsFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((Button) view).setEnabled(false);
                 inflateRoleButtons(view);
             }
         });
@@ -76,11 +77,17 @@ public class TeamsFragment extends Fragment {
     }
 
     private void inflateRoleButtons(View view) {
-        View dialogView = getLayoutInflater().inflate(R.layout.content_role_button,null);
+        View dialogView = getLayoutInflater().inflate(R.layout.content_role_button, null);
         Button teamButton = dialogView.findViewById(R.id.btn_team);
         Button memberButton = dialogView.findViewById(R.id.btn_member);
 
         BottomSheetDialog dialog = new BottomSheetDialog(view.getContext());
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                button.setEnabled(true);
+            }
+        });
         dialog.setContentView(dialogView);
         dialog.show();
     }

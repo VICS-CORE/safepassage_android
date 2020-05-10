@@ -46,6 +46,7 @@ public class PassAdapter extends RecyclerView.Adapter<PassAdapter.PassHolder> {
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((CardView) view).setEnabled(false);
                 Intent intent = new Intent(context, PassViewActivity.class);
                 intent.putExtra("user", user);
                 intent.putExtra("pass", passList.getPasses().get(pos));

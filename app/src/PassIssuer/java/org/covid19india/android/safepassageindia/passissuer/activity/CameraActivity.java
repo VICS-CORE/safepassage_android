@@ -89,12 +89,13 @@ public class CameraActivity extends AppCompatActivity {
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).build();
         final ImageCapture imgCap = new ImageCapture(imgCapConfig);
 
-        findViewById(R.id.btn_capture).setOnClickListener(new View.OnClickListener() {
+        btnCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                File folder = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham");
 //                folder.mkdir();
 //                File file = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham/" + System.currentTimeMillis() + ".jpg");
+                ((ImageButton) btnCapture).setEnabled(false);
                 imgCap.takePicture(new ImageCapture.OnImageCapturedListener() {
                     @Override
                     public void onCaptureSuccess(ImageProxy image, int rotationDegrees) {
@@ -248,6 +249,7 @@ public class CameraActivity extends AppCompatActivity {
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
+        btnCapture.setEnabled(true);
     }
 
     @Override
