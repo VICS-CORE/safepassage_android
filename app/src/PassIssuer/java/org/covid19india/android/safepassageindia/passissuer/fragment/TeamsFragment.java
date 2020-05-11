@@ -1,6 +1,7 @@
 package org.covid19india.android.safepassageindia.passissuer.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.passissuer.activity.FormActivity;
 
 import androidx.fragment.app.Fragment;
 
@@ -80,8 +82,27 @@ public class TeamsFragment extends Fragment {
         View dialogView = getLayoutInflater().inflate(R.layout.content_role_button, null);
         Button teamButton = dialogView.findViewById(R.id.btn_team);
         Button memberButton = dialogView.findViewById(R.id.btn_member);
-
-        BottomSheetDialog dialog = new BottomSheetDialog(view.getContext());
+        final BottomSheetDialog dialog = new BottomSheetDialog(view.getContext());
+        teamButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((Button) view).setEnabled(false);
+                Intent intent = new Intent(getContext(), FormActivity.class);
+                intent.putExtra("form_type", "team");
+                startActivity(intent);
+                dialog.cancel();
+            }
+        });
+        memberButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((Button) view).setEnabled(false);
+                Intent intent = new Intent(getContext(), FormActivity.class);
+                intent.putExtra("form_type", "member");
+                startActivity(intent);
+                dialog.cancel();
+            }
+        });
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {

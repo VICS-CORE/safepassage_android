@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +24,6 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.covid19india.android.safepassageindia.R;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -209,8 +206,6 @@ public class PassFormFragment extends Fragment {
     private void init(View view) {
         View fromLayout = view.findViewById(R.id.from_layout);
         View tillLayout = view.findViewById(R.id.till_layout);
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + getString(R.string.app_name) + "</font>"));
         spinner = view.findViewById(R.id.spinner);
         userImage = view.findViewById(R.id.user_pic);
         userImage.setImageBitmap(bitmap);
