@@ -3,4 +3,8 @@
     <string name="app_name">Pass Issuer</string>
     <string name="flavor_name">passissuer</string>
     <string name="title_activity_pass_issuer_list">VCIS Pass Issue</string>
+    <string name="new_pass">New Pass</string>
+    <string name="team">Team</string>
+    <string name="member">Member</string>
+    <string name="new_word">New</string>
 </resources>

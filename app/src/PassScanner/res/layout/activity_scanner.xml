@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context="org.covid19india.android.safepassageindia.passscanner.ScannerActivity">
+    tools:context="org.covid19india.android.safepassageindia.passscanner.activity.ScannerActivity">
 
     <RelativeLayout
         android:id="@+id/relative_layout"
@@ -20,14 +20,31 @@
             android:paddingStart="10dp"
             android:paddingEnd="10dp">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:src="@drawable/phone_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:text="@string/country_code_india"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="20sp" />
+
             <EditText
                 android:id="@+id/phone_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="9"
-                android:drawableStart="@drawable/phone_icon"
                 android:hint="@string/phone_field"
                 android:inputType="phone"
+                android:letterSpacing="0.1"
+                android:maxLength="10"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/darker_gray" />
 
