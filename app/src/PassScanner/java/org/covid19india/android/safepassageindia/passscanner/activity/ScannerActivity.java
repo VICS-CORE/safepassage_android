@@ -1,5 +1,6 @@
 package org.covid19india.android.safepassageindia.passscanner.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,6 +30,7 @@ import org.covid19india.android.safepassageindia.model.UserPassList;
 import org.json.JSONObject;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -42,6 +44,7 @@ import static android.Manifest.permission.CAMERA;
 
 public class ScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     private static final int REQUEST_CAMERA = 1;
+    private static final int REQUEST_LOCATION = 3;
     ZXingScannerView scannerView;
     RelativeLayout relativeLayout;
     ImageButton button;
@@ -58,6 +61,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         setContentView(R.layout.activity_scanner);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
+        checkLocationPermission();
         addScanner();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +117,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(200, 200);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         relativeLayout.addView(progressBar, layoutParams);
-        verifyPermission();
+        checkCameraPermission();
     }
 
     private void requestApi(String content) {
@@ -171,18 +175,44 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION && !isLocationPermissionGranted()) {
+            Toast.makeText(ScannerActivity.this, "Location Permission denied", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
 
-    public void verifyPermission() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+    private void checkLocationPermission() {
+        if (!isLocationPermissionGranted()) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+        }
+    }
+
+    public void checkCameraPermission() {
         int currentApiVersion = Build.VERSION.SDK_INT;
 
         if (currentApiVersion >= Build.VERSION_CODES.M) {
-            if (!isPermissionGranted()) {
+            if (!isCameraPermissionGranted()) {
                 requestPermission();
             }
         }
     }
 
-    private boolean isPermissionGranted() {
+    private boolean isLocationPermissionGranted() {
+        return ActivityCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean isCameraPermissionGranted() {
         return (ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA) == PackageManager.PERMISSION_GRANTED);
     }
 
@@ -207,7 +237,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         super.onResume();
         int currentApiVersion = android.os.Build.VERSION.SDK_INT;
         if (currentApiVersion >= android.os.Build.VERSION_CODES.M) {
-            if (isPermissionGranted()) {
+            if (isCameraPermissionGranted()) {
                 if (scannerView != null) {
                     scannerView.setResultHandler(this);
                     scannerView.startCamera();
