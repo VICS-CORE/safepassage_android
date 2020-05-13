@@ -1,6 +1,5 @@
 package org.covid19india.android.safepassageindia.passscanner.activity;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -50,15 +49,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
 
 public class ScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
-    private static final int REQUEST_CAMERA = 1;
-    private static final int REQUEST_LOCATION = 3;
+    private static final int REQUEST_CAMERA_AND_LOCATION = 1;
     private static final String responseFormat = "json";
     private static final String userType = "3";
     private static final String TAG = "ScannerActivity";
-    private static final int REQUEST_CHECK_SETTINGS = 4;
+    private static final int REQUEST_CHECK_SETTINGS = 2;
     private ZXingScannerView scannerView;
     private RelativeLayout relativeLayout;
     private ImageButton button;
@@ -74,13 +74,12 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
 
-        checkLocationPermission();
+        getPermission();
         createLocationRequest();
         if (isLocationPermissionGranted()) {
             requestLocationSettings(null);
+            addScanner();
         }
-
-        addScanner();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,7 +139,6 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(200, 200);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         relativeLayout.addView(progressBar, layoutParams);
-        checkCameraPermission();
     }
 
     private void requestApi(String content) {
@@ -233,34 +231,18 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                 });
     }
 
-    private void checkLocationPermission() {
-        if (!isLocationPermissionGranted()) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
-        }
-    }
-
-    public void checkCameraPermission() {
-        int currentApiVersion = Build.VERSION.SDK_INT;
-
-        if (currentApiVersion >= Build.VERSION_CODES.M) {
-            if (!isCameraPermissionGranted()) {
-                requestPermission();
-            }
-        }
+    private void getPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{CAMERA, ACCESS_FINE_LOCATION,
+                ACCESS_COARSE_LOCATION}, REQUEST_CAMERA_AND_LOCATION);
     }
 
     private boolean isLocationPermissionGranted() {
-        return ActivityCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        return ActivityCompat.checkSelfPermission(ScannerActivity.this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(ScannerActivity.this, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     private boolean isCameraPermissionGranted() {
         return (ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA) == PackageManager.PERMISSION_GRANTED);
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{CAMERA}, REQUEST_CAMERA);
     }
 
     @Override
@@ -297,9 +279,10 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_LOCATION) {
+        if (requestCode == REQUEST_CAMERA_AND_LOCATION) {
             if (isLocationPermissionGranted()) {
                 requestLocationSettings(null);
+                addScanner();
             } else {
                 Toast.makeText(ScannerActivity.this, "Location Permission denied", Toast.LENGTH_SHORT).show();
                 finish();
