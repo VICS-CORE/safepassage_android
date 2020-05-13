@@ -3,6 +3,7 @@ package org.covid19india.android.safepassageindia.passscanner.activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -20,6 +21,15 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.zxing.Result;
 
@@ -45,15 +55,17 @@ import static android.Manifest.permission.CAMERA;
 public class ScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     private static final int REQUEST_CAMERA = 1;
     private static final int REQUEST_LOCATION = 3;
-    ZXingScannerView scannerView;
-    RelativeLayout relativeLayout;
-    ImageButton button;
-    EditText phoneEdit;
-    ProgressBar progressBar;
-    Vibrator vibrator;
     private static final String responseFormat = "json";
     private static final String userType = "3";
     private static final String TAG = "ScannerActivity";
+    private static final int REQUEST_CHECK_SETTINGS = 4;
+    private ZXingScannerView scannerView;
+    private RelativeLayout relativeLayout;
+    private ImageButton button;
+    private EditText phoneEdit;
+    private ProgressBar progressBar;
+    private Vibrator vibrator;
+    private LocationRequest locationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +73,20 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         setContentView(R.layout.activity_scanner);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
+
         checkLocationPermission();
+        createLocationRequest();
+        if (isLocationPermissionGranted()) {
+            requestLocationSettings(null);
+        }
+
         addScanner();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
                 phoneEdit.onEditorAction(EditorInfo.IME_ACTION_DONE);
-                String content = phoneEdit.getText().toString().trim();
+                final String content = phoneEdit.getText().toString().trim();
                 if (content.length() != 10) {
                     phoneEdit.setError("Invalid Number");
                     phoneEdit.setText("");
@@ -78,7 +96,12 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                 }
                 phoneEdit.setText("");
                 scannerView.stopCameraPreview();
-                requestApi(content);
+                requestLocationSettings(new OnSuccessListener<LocationSettingsResponse>() {
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                        requestApi(content);
+                    }
+                });
             }
         });
     }
@@ -175,19 +198,39 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_LOCATION && !isLocationPermissionGranted()) {
-            Toast.makeText(ScannerActivity.this, "Location Permission denied", Toast.LENGTH_SHORT).show();
-            finish();
-        }
+    protected void createLocationRequest() {
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
+    private void requestLocationSettings(OnSuccessListener<LocationSettingsResponse> listener) {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        SettingsClient client = LocationServices.getSettingsClient(this);
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build())
+                .addOnSuccessListener(this, listener)
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Location not turned on, requesting user dialog");
+                        progressBar.setVisibility(View.GONE);
+                        if (e instanceof ResolvableApiException) {
+                            // Location settings are not satisfied, but this can be fixed
+                            // by showing the user a dialog.
+                            try {
+                                // Show the dialog by calling startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                ResolvableApiException resolvable = (ResolvableApiException) e;
+                                resolvable.startResolutionForResult(ScannerActivity.this,
+                                        REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException sendEx) {
+                                // Ignore the error.
+                            }
+                        }
+                    }
+                });
     }
 
     private void checkLocationPermission() {
@@ -229,7 +272,39 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         Log.d(TAG, result.getText());
         Log.d(TAG, result.getBarcodeFormat().toString());
         progressBar.setVisibility(View.VISIBLE);
-        requestApi(text);
+        requestLocationSettings(new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                requestApi(text);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CHECK_SETTINGS) {
+            switch (resultCode) {
+                case AppCompatActivity.RESULT_CANCELED:
+                    Toast.makeText(ScannerActivity.this, "Turn on location to proceed", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Location request settings canceled");
+                    finish();
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION) {
+            if (isLocationPermissionGranted()) {
+                requestLocationSettings(null);
+            } else {
+                Toast.makeText(ScannerActivity.this, "Location Permission denied", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
     }
 
     @Override

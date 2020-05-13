@@ -129,6 +129,7 @@ public class MenuActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 view.setVisibility(View.VISIBLE);
                 Log.d(TAG, "Session already present");
+                Log.d(TAG, "Expires on " + RetrofitClient.getExpiry(MenuActivity.this));
             }
         }
     }

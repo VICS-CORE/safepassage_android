@@ -68,13 +68,17 @@ public class RetrofitClient {
     }
 
     public static boolean isExpired(Context context) {
-        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
-        String expiry = sf.getString("Expiry", "NA");
+        String expiry = getExpiry(context);
         if (expiry.equals("NA")) {
             return false;
         } else {
             return checkDate(expiry);
         }
+    }
+
+    public static String getExpiry(Context context) {
+        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        return sf.getString("Expiry", "NA");
     }
 
     private static boolean checkDate(String date) {
