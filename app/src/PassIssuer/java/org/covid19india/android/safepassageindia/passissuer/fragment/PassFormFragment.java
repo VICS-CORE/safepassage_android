@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -32,7 +33,6 @@ import androidx.fragment.app.Fragment;
  * create an instance of this fragment.
  */
 public class PassFormFragment extends Fragment {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_BITMAP = "bitmap";
 
 
@@ -40,10 +40,9 @@ public class PassFormFragment extends Fragment {
     private ImageView userImage;
     private View fromLayout, tillLayout;
     private Spinner spinner;
-    private TextInputEditText fromDateEdit;
-    private TextInputEditText fromTimeEdit;
-    private TextInputEditText tillDateEdit;
-    private TextInputEditText tillTimeEdit;
+    private TextInputEditText fromDateEdit, fromTimeEdit;
+    private TextInputEditText tillDateEdit, tillTimeEdit;
+    private Button doneButton;
     private Calendar start;
     private static final String[] types = {"Pass Type", "Daily pass", "Permanent pass", "One Time pass"};
 
@@ -86,6 +85,12 @@ public class PassFormFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pass_form, container, false);
         init(view);
         setTypeSpinner(view);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO implement the post request to pass form here
+            }
+        });
 
         fromLayout = view.findViewById(R.id.from_layout);
         tillLayout = view.findViewById(R.id.till_layout);
@@ -206,12 +211,13 @@ public class PassFormFragment extends Fragment {
     private void init(View view) {
         View fromLayout = view.findViewById(R.id.from_layout);
         View tillLayout = view.findViewById(R.id.till_layout);
-        spinner = view.findViewById(R.id.spinner);
-        userImage = view.findViewById(R.id.user_pic);
-        userImage.setImageBitmap(bitmap);
         fromDateEdit = fromLayout.findViewById(R.id.dateEdit);
         fromTimeEdit = fromLayout.findViewById(R.id.timeEdit);
         tillDateEdit = tillLayout.findViewById(R.id.dateEdit);
         tillTimeEdit = tillLayout.findViewById(R.id.timeEdit);
+        spinner = view.findViewById(R.id.spinner);
+        userImage = view.findViewById(R.id.user_pic);
+        userImage.setImageBitmap(bitmap);
+        doneButton = view.findViewById(R.id.btn_done);
     }
 }

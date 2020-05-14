@@ -11,7 +11,9 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.passissuer.fragment.ExistingUserFragment;
 import org.covid19india.android.safepassageindia.passissuer.fragment.MemberFormFragment;
+import org.covid19india.android.safepassageindia.passissuer.fragment.NewUserFormFragment;
 import org.covid19india.android.safepassageindia.passissuer.fragment.PassFormFragment;
 import org.covid19india.android.safepassageindia.passissuer.fragment.TeamFormFragment;
 
@@ -36,6 +38,14 @@ public class FormActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.arrow_back_icon);
         getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + getString(R.string.app_name) + "</font>"));
         switch (type) {
+            case "new_user":
+                Log.d(TAG, "New User");
+                loadFragment(NewUserFormFragment.newInstance());
+                break;
+            case "existing_user":
+                Log.d(TAG, "Existing User");
+                loadFragment(ExistingUserFragment.newInstance());
+                break;
             case "pass":
                 Log.d(TAG, "Pass");
                 loadFragment(PassFormFragment.newInstance(bitmap));

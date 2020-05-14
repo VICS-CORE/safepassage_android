@@ -7,4 +7,6 @@
     <string name="team">Team</string>
     <string name="member">Member</string>
     <string name="new_word">New</string>
+    <string name="button_1">Button 1</string>
+    <string name="button_2">Button 2</string>
 </resources>
