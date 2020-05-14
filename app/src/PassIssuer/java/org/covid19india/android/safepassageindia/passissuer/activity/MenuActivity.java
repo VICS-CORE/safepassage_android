@@ -109,7 +109,7 @@ public class MenuActivity extends AppCompatActivity {
                 RetrofitClient.removeCookie(getApplicationContext());
                 logOut();
             } else {
-                Log.d(TAG, "Session already present");
+                Log.d(TAG, "Session already present\nExpires on " + RetrofitClient.getExpiry(MenuActivity.this));
             }
         }
     }
