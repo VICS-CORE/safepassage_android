@@ -19,6 +19,7 @@ import android.widget.Toast;
 import org.covid19india.android.safepassageindia.R;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,7 +38,7 @@ import androidx.core.content.ContextCompat;
 public class CameraActivity extends AppCompatActivity {
     private static final String TAG = "CameraActivity";
     private int REQUEST_CODE_PERMISSIONS = 10; //arbitrary number, can be changed accordingly
-    private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"}; //array w/ permissions from manifest
+    private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA"}; //array w/ permissions from manifest
     TextureView textureView;
     ImageButton btnCapture;
 
@@ -95,7 +96,12 @@ public class CameraActivity extends AppCompatActivity {
 //                File folder = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham");
 //                folder.mkdir();
 //                File file = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham/" + System.currentTimeMillis() + ".jpg");
+                File folder = new File(getCacheDir() + "/SafePassage");
+                boolean isFolderCreated = folder.mkdir();
+                long time = System.currentTimeMillis(); //File name
+                File file = new File(getCacheDir() + "/SafePassage/" + time + ".jpg");
                 ((ImageButton) btnCapture).setEnabled(false);
+                //TODO Use any one of the two imgCap.takePicture method, while commenting other
                 imgCap.takePicture(new ImageCapture.OnImageCapturedListener() {
                     @Override
                     public void onCaptureSuccess(ImageProxy image, int rotationDegrees) {
@@ -125,11 +131,7 @@ public class CameraActivity extends AppCompatActivity {
                     @Override
                     public void onImageSaved(@NonNull File file) {
                         String msg = "Photo capture succeeded: " + file.getAbsolutePath();
-//                        ImageUploader uploader = new ImageUploader();
-//                        uploader.context = getApplicationContext();
-//                        uploader.initRetrofitClient();
-//                        uploader.multipartImageUpload(file.getAbsolutePath());
-                        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+                        Toast.makeText(CameraActivity.this, msg, Toast.LENGTH_LONG).show();
                     }
 
                     @Override

@@ -12,6 +12,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.passissuer.activity.CameraActivity;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 
@@ -63,6 +64,8 @@ public class ExistingUserFragment extends Fragment {
     }
 
     private void verifyUser() {
+        //TODO verify user
+        startCameraActivity();
     }
 
     private boolean validate() {
@@ -86,6 +89,7 @@ public class ExistingUserFragment extends Fragment {
 
     private void init(View view) {
         verifyButton = view.findViewById(R.id.btn_verify);
+        verifyButton.setBackground(ContextCompat.getDrawable(view.getContext(), R.drawable.blue_button));
         phoneText = view.findViewById(R.id.phoneEdit);
     }
 }

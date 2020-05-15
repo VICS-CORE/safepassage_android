@@ -13,6 +13,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import org.covid19india.android.safepassageindia.R;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 
@@ -97,6 +98,7 @@ public class NewUserFormFragment extends Fragment {
     private void init(final View view) {
         radioButton = view.findViewById(R.id.sample);
         createButton = view.findViewById(R.id.btn_create);
+        createButton.setBackground(ContextCompat.getDrawable(view.getContext(), R.drawable.blue_button));
         firstNameText = view.findViewById(R.id.firstNameEdit);
         middleNameText = view.findViewById(R.id.middleNameEdit);
         lastNameText = view.findViewById(R.id.lastNameEdit);
