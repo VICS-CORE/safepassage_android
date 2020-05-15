@@ -55,8 +55,11 @@ public class ExistingUserFragment extends Fragment {
         verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((Button) view).setEnabled(false);
                 if (validate()) {
                     verifyUser();
+                } else {
+                    ((Button) view).setEnabled(true);
                 }
             }
         });
@@ -85,11 +88,13 @@ public class ExistingUserFragment extends Fragment {
         Intent intent = new Intent(getActivity().getApplicationContext(), CameraActivity.class);
         //TODO add whatever details have to be sent through intent
         startActivity(intent);
+        getActivity().finish();
     }
 
     private void init(View view) {
         verifyButton = view.findViewById(R.id.btn_verify);
         verifyButton.setBackground(ContextCompat.getDrawable(view.getContext(), R.drawable.blue_button));
+
         phoneText = view.findViewById(R.id.phoneEdit);
     }
 }

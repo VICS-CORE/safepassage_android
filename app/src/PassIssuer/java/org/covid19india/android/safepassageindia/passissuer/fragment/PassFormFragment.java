@@ -25,6 +25,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.covid19india.android.safepassageindia.R;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -42,7 +43,7 @@ public class PassFormFragment extends Fragment {
     private Spinner spinner;
     private TextInputEditText fromDateEdit, fromTimeEdit;
     private TextInputEditText tillDateEdit, tillTimeEdit;
-    private Button doneButton;
+    private Button createButton;
     private Calendar start;
     private static final String[] types = {"Pass Type", "Daily pass", "Permanent pass", "One Time pass"};
 
@@ -85,7 +86,7 @@ public class PassFormFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pass_form, container, false);
         init(view);
         setTypeSpinner(view);
-        doneButton.setOnClickListener(new View.OnClickListener() {
+        createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO implement the post request to pass form here
@@ -209,6 +210,9 @@ public class PassFormFragment extends Fragment {
     }
 
     private void init(View view) {
+        createButton = view.findViewById(R.id.btn_create);
+        createButton.setBackground(ContextCompat.getDrawable(view.getContext(), R.drawable.blue_button));
+
         View fromLayout = view.findViewById(R.id.from_layout);
         View tillLayout = view.findViewById(R.id.till_layout);
         fromDateEdit = fromLayout.findViewById(R.id.dateEdit);
@@ -218,6 +222,5 @@ public class PassFormFragment extends Fragment {
         spinner = view.findViewById(R.id.spinner);
         userImage = view.findViewById(R.id.user_pic);
         userImage.setImageBitmap(bitmap);
-        doneButton = view.findViewById(R.id.btn_done);
     }
 }

@@ -13,7 +13,9 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btn_create"
+            android:layout_alignParentTop="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,7 +106,7 @@
         </ScrollView>
 
         <Button
-            android:id="@+id/btn_done"
+            android:id="@+id/btn_create"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -113,9 +115,9 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="25dp"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/blue_button"
             android:text="Create"
             android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            app:backgroundTint="@android:color/holo_blue_light" />
     </RelativeLayout>
 </FrameLayout>

@@ -6,11 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.covid19india.android.safepassageindia.R;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 
@@ -20,6 +22,7 @@ import androidx.fragment.app.Fragment;
  * create an instance of this fragment.
  */
 public class TeamFormFragment extends Fragment {
+    Button createButton;
     private static final String[] teams = {"Select team", "Team A", "Team B", "Team C", "Team D"};
     private static final String[] roles = {"Select role", "Admin", "Issuer"};
     private Spinner teamSpinner, roleSpinner;
@@ -50,6 +53,9 @@ public class TeamFormFragment extends Fragment {
     }
 
     private void init(View view) {
+        createButton = view.findViewById(R.id.btn_create);
+        createButton.setBackground(ContextCompat.getDrawable(view.getContext(), R.drawable.blue_button));
+
         teamSpinner = view.findViewById(R.id.spinner_team);
         setSpinner(view, teamSpinner, teams);
         roleSpinner = view.findViewById(R.id.spinner_role);

@@ -13,7 +13,9 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btn_create"
+            android:layout_alignParentTop="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -169,7 +171,6 @@
             android:text="Create"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            app:background="@drawable/blue_button"
             app:backgroundTint="@android:color/holo_blue_light" />
     </RelativeLayout>
 </FrameLayout>

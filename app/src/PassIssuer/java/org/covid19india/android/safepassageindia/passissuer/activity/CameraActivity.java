@@ -1,5 +1,6 @@
 package org.covid19india.android.safepassageindia.passissuer.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -23,6 +24,7 @@ import java.io.File;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraX;
 import androidx.camera.core.ImageAnalysis;
@@ -120,6 +122,7 @@ public class CameraActivity extends AppCompatActivity {
                         intent.putExtra("form_type", "pass");
                         intent.putExtra("image", byteArray);
                         startActivity(intent);
+                        finish();
                     }
 
                     @Override
@@ -132,6 +135,10 @@ public class CameraActivity extends AppCompatActivity {
                     public void onImageSaved(@NonNull File file) {
                         String msg = "Photo capture succeeded: " + file.getAbsolutePath();
                         Toast.makeText(CameraActivity.this, msg, Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(CameraActivity.this, FormActivity.class);
+                        intent.putExtra("form_type", "pass");
+                        startActivity(intent);
+                        finish();
                     }
 
                     @Override
@@ -255,9 +262,30 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle)
+                .setTitle("Do you want to Cancel?")
+                .setMessage("You have come a long way. Are you sure you want this?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            this.onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

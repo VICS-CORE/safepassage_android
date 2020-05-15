@@ -1,5 +1,8 @@
 package org.covid19india.android.safepassageindia.passissuer.fragment;
 
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +15,9 @@ import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.passissuer.activity.CameraActivity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -69,6 +74,7 @@ public class NewUserFormFragment extends Fragment {
 
     private void createUser() {
         //TODO implement the create user retrofit
+        callAlertDialog();
     }
 
     private boolean validate() {
@@ -96,9 +102,10 @@ public class NewUserFormFragment extends Fragment {
     }
 
     private void init(final View view) {
-        radioButton = view.findViewById(R.id.sample);
         createButton = view.findViewById(R.id.btn_create);
         createButton.setBackground(ContextCompat.getDrawable(view.getContext(), R.drawable.blue_button));
+
+        radioButton = view.findViewById(R.id.sample);
         firstNameText = view.findViewById(R.id.firstNameEdit);
         middleNameText = view.findViewById(R.id.middleNameEdit);
         lastNameText = view.findViewById(R.id.lastNameEdit);
@@ -112,5 +119,35 @@ public class NewUserFormFragment extends Fragment {
                 gender = radioButton.getText().toString().trim();
             }
         });
+    }
+
+    public void callAlertDialog() {
+        final Activity activity = getActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.AlertDialogStyle)
+//                .setTitle("Do you want to continue?")
+                .setMessage("User is created, do you want to continue?")
+                .setPositiveButton("Continue to pass creation", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startCameraActivity();
+                    }
+                })
+                .setNegativeButton("Home page", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        activity.finish();
+                    }
+                })
+                .setCancelable(false);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void startCameraActivity() {
+        Intent intent = new Intent(getActivity().getApplicationContext(), CameraActivity.class);
+        //TODO add whatever details have to be sent through intent
+        startActivity(intent);
+        getActivity().finish();
     }
 }
