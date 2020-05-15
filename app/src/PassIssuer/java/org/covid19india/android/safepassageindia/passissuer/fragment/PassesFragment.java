@@ -11,7 +11,6 @@ import android.widget.Button;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.covid19india.android.safepassageindia.R;
-import org.covid19india.android.safepassageindia.passissuer.activity.CameraActivity;
 import org.covid19india.android.safepassageindia.passissuer.activity.FormActivity;
 
 import androidx.fragment.app.Fragment;
@@ -61,8 +60,8 @@ public class PassesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ((Button) view).setEnabled(false);
-                startActivity(new Intent(view.getContext(), CameraActivity.class));
-//                inflatePassDialog(view);
+//                startActivity(new Intent(view.getContext(), CameraActivity.class));
+                inflatePassDialog(view);
             }
         });
     }
