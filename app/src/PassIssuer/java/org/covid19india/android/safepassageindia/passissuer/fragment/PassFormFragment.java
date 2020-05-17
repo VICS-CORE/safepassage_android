@@ -40,12 +40,12 @@ public class PassFormFragment extends Fragment {
     private Bitmap bitmap;
     private ImageView userImage;
     private View fromLayout, tillLayout;
-    private Spinner spinner;
+    private Spinner typeSpinner, medicalSpinner;
     private TextInputEditText fromDateEdit, fromTimeEdit;
     private TextInputEditText tillDateEdit, tillTimeEdit;
     private Button createButton;
     private Calendar start;
-    private static final String[] types = {"Pass Type", "Daily pass", "Permanent pass", "One Time pass"};
+    private static final String[] types = {"Pass Type", "Daily pass", "Permanent pass", "One Time pass"}, medicalVerification = {"Medical Verification", "Yes", "No"};
 
     public PassFormFragment() {
         // Required empty public constructor
@@ -86,6 +86,7 @@ public class PassFormFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pass_form, container, false);
         init(view);
         setTypeSpinner(view);
+        setMedicalSpinner(view);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -206,7 +207,38 @@ public class PassFormFragment extends Fragment {
             }
         };
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        typeSpinner.setAdapter(adapter);
+    }
+
+    private void setMedicalSpinner(View view) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(), R.layout.spinner_item, medicalVerification) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if (position == 0) {
+                    // Set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        medicalSpinner.setAdapter(adapter);
     }
 
     private void init(View view) {
@@ -219,7 +251,8 @@ public class PassFormFragment extends Fragment {
         fromTimeEdit = fromLayout.findViewById(R.id.timeEdit);
         tillDateEdit = tillLayout.findViewById(R.id.dateEdit);
         tillTimeEdit = tillLayout.findViewById(R.id.timeEdit);
-        spinner = view.findViewById(R.id.spinner);
+        typeSpinner = view.findViewById(R.id.pass_type);
+        medicalSpinner = view.findViewById(R.id.medical_verification);
         userImage = view.findViewById(R.id.user_pic);
         userImage.setImageBitmap(bitmap);
     }

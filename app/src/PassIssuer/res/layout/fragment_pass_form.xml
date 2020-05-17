@@ -31,51 +31,22 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="10dp" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_phone"
-                    style="@style/EditTextStyle"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="10dp"
-                    android:textColorHint="@android:color/darker_gray"
-                    app:boxStrokeColor="@android:color/white"
-                    app:hintTextColor="@android:color/white">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/phoneEdit"
+                    android:background="@drawable/spinner_border">
+                    <!-- Pass Type -->
+                    <Spinner
+                        android:id="@+id/medical_verification"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Phone Number"
-                        android:inputType="phone"
-                        android:textColor="@android:color/white"
-                        android:textCursorDrawable="@null" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_verification"
-                    style="@style/EditTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:textColorHint="@android:color/darker_gray"
-                    app:boxStrokeColor="@android:color/white"
-                    app:hintTextColor="@android:color/white">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/verificationEdit"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Medical Verification"
-                        android:inputType="textCapWords"
-                        android:textColor="@android:color/white"
-                        android:textCursorDrawable="@null" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:backgroundTint="@android:color/white"
+                        android:padding="10dp" />
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -87,7 +58,7 @@
                     android:background="@drawable/spinner_border">
                     <!-- Pass Type -->
                     <Spinner
-                        android:id="@+id/spinner"
+                        android:id="@+id/pass_type"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@android:color/white"
