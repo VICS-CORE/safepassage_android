@@ -2,18 +2,31 @@ package org.covid19india.android.safepassageindia.passissuer.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.covid19india.android.safepassageindia.R;
+import org.covid19india.android.safepassageindia.RetrofitClient;
+import org.covid19india.android.safepassageindia.ServerApi;
+import org.covid19india.android.safepassageindia.model.User;
+import org.covid19india.android.safepassageindia.model.UserList;
 import org.covid19india.android.safepassageindia.passissuer.activity.CameraActivity;
+import org.covid19india.android.safepassageindia.passissuer.activity.FormActivity;
+
+import java.util.Objects;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 
 /**
@@ -22,8 +35,10 @@ import androidx.fragment.app.Fragment;
  * create an instance of this fragment.
  */
 public class ExistingUserFragment extends Fragment {
+    private static final String TAG = "ExistingUserFragment";
     private TextInputEditText phoneText;
     private Button verifyButton;
+    private User user;
 
     public ExistingUserFragment() {
         // Required empty public constructor
@@ -55,11 +70,11 @@ public class ExistingUserFragment extends Fragment {
         verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((Button) view).setEnabled(false);
+                view.setEnabled(false);
                 if (validate()) {
                     verifyUser();
                 } else {
-                    ((Button) view).setEnabled(true);
+                    view.setEnabled(true);
                 }
             }
         });
@@ -67,8 +82,36 @@ public class ExistingUserFragment extends Fragment {
     }
 
     private void verifyUser() {
-        //TODO verify user
-        startCameraActivity();
+        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
+        ServerApi serverApi = retrofit.create(ServerApi.class);
+        serverApi.getUsers(RetrofitClient.getSession(Objects.requireNonNull(getContext())), "json", phoneText.getText().toString().trim(), "2")
+                .enqueue(new Callback<UserList>() {
+                    @Override
+                    public void onResponse(Call<UserList> call, Response<UserList> response) {
+                        if (response.isSuccessful() && response.code() / 100 == 2) {
+                            if (response.body() != null && response.body().getUsers().size() == 1) {
+                                user = response.body().getUsers().get(0);
+                                Intent intent = new Intent(getContext(), CameraActivity.class);
+                                intent.putExtra("user_id", user.getUser_id());
+                                intent.putExtra("user_phoneNumber", user.getUser_phoneNumber());
+                                startActivity(intent);
+                                Objects.requireNonNull(getActivity()).finish();
+                            } else {
+                                Log.d(TAG, "No user found");
+                                Intent intent = new Intent(getContext(), FormActivity.class);
+                                intent.putExtra("form_type", "new_user");
+                                startActivity(intent);
+                                Objects.requireNonNull(getActivity()).finish();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserList> call, Throwable t) {
+                        Log.d(TAG, "Connection Failure");
+                        Toast.makeText(getContext(), "Unable to connect to server", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private boolean validate() {
@@ -82,13 +125,6 @@ public class ExistingUserFragment extends Fragment {
             return false;
         }
         return true;
-    }
-
-    private void startCameraActivity() {
-        Intent intent = new Intent(getActivity().getApplicationContext(), CameraActivity.class);
-        //TODO add whatever details have to be sent through intent
-        startActivity(intent);
-        getActivity().finish();
     }
 
     private void init(View view) {

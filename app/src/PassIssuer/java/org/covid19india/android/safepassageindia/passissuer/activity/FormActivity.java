@@ -29,7 +29,7 @@ public class FormActivity extends AppCompatActivity {
     private static final String TAG = "FormActivity";
     private FrameLayout frameLayout;
     private Fragment passFormFragment;
-    private String type;
+    private String type, userId, phoneNumber;
     private Bitmap bitmap;
 
     @Override
@@ -51,7 +51,7 @@ public class FormActivity extends AppCompatActivity {
                 break;
             case "pass":
                 Log.d(TAG, "Pass");
-                passFormFragment = PassFormFragment.newInstance(bitmap);
+                passFormFragment = PassFormFragment.newInstance(bitmap, userId, phoneNumber);
                 loadFragment(passFormFragment);
                 break;
             case "team":
@@ -75,8 +75,9 @@ public class FormActivity extends AppCompatActivity {
         type = intent.getStringExtra("form_type");
         if (type != null && type.equals("pass")) {
             byte[] bytes = intent.getByteArrayExtra("image");
-//            bitmap = intent.getParcelableExtra("bitmap");
             bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            userId = intent.getStringExtra("user_id");
+            phoneNumber = intent.getStringExtra("user_phoneNumber");
         }
     }
 

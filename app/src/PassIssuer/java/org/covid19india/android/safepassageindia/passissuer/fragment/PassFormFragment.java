@@ -35,9 +35,12 @@ import androidx.fragment.app.Fragment;
  */
 public class PassFormFragment extends Fragment {
     private static final String ARG_BITMAP = "bitmap";
+    private static final String ARG_ID = "user_id";
+    private static final String ARG_PHONE = "user_phoneNumber";
 
 
     private Bitmap bitmap;
+    private String userId, phoneNumber;
     private ImageView userImage;
     private View fromLayout, tillLayout;
     private Spinner typeSpinner, medicalSpinner;
@@ -58,10 +61,12 @@ public class PassFormFragment extends Fragment {
      * @param bitmap Bitmap of User image.
      * @return A new instance of fragment PassFormFragment.
      */
-    public static PassFormFragment newInstance(Bitmap bitmap) {
+    public static PassFormFragment newInstance(Bitmap bitmap, String id, String phoneNumber) {
         PassFormFragment fragment = new PassFormFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_BITMAP, bitmap);
+        args.putString(ARG_ID, id);
+        args.putString(ARG_PHONE, phoneNumber);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,6 +76,8 @@ public class PassFormFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             bitmap = getArguments().getParcelable(ARG_BITMAP);
+            userId = getArguments().getString(ARG_ID);
+            phoneNumber = getArguments().getString(ARG_PHONE);
         }
     }
 
@@ -255,5 +262,8 @@ public class PassFormFragment extends Fragment {
         medicalSpinner = view.findViewById(R.id.medical_verification);
         userImage = view.findViewById(R.id.user_pic);
         userImage.setImageBitmap(bitmap);
+
+        //Set phone number in edit text
+        ((TextInputEditText) view.findViewById(R.id.phoneEdit)).setText(phoneNumber);
     }
 }

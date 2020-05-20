@@ -41,6 +41,7 @@ public class CameraActivity extends AppCompatActivity {
     private static final String TAG = "CameraActivity";
     private int REQUEST_CODE_PERMISSIONS = 10; //arbitrary number, can be changed accordingly
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA"}; //array w/ permissions from manifest
+    private String user_id, user_phone;
     TextureView textureView;
     ImageButton btnCapture;
 
@@ -49,13 +50,19 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        textureView = findViewById(R.id.texture_view);
-        btnCapture = findViewById(R.id.btn_capture);
+        init();
         if (allPermissionsGranted()) {
             startCamera(); //start camera if permission has been granted by user
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
+    }
+
+    private void init() {
+        textureView = findViewById(R.id.texture_view);
+        btnCapture = findViewById(R.id.btn_capture);
+        user_id = getIntent().getStringExtra("user_id");
+        user_phone = getIntent().getStringExtra("user_phoneNumber");
     }
 
     private void startCamera() {
@@ -121,6 +128,9 @@ public class CameraActivity extends AppCompatActivity {
                         Intent intent = new Intent(CameraActivity.this, FormActivity.class);
                         intent.putExtra("form_type", "pass");
                         intent.putExtra("image", byteArray);
+                        intent.putExtra("user_id", user_id);
+                        intent.putExtra("user_phoneNumber", user_phone);
+
                         startActivity(intent);
                         finish();
                     }
@@ -137,6 +147,8 @@ public class CameraActivity extends AppCompatActivity {
                         Toast.makeText(CameraActivity.this, msg, Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(CameraActivity.this, FormActivity.class);
                         intent.putExtra("form_type", "pass");
+                        intent.putExtra("user_id", user_id);
+                        intent.putExtra("user_phoneNumber", user_phone);
                         startActivity(intent);
                         finish();
                     }

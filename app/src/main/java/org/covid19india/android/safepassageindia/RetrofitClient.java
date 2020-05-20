@@ -62,8 +62,7 @@ public class RetrofitClient {
     }
 
     public static boolean isEmpty(Context context) {
-        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
-        String cookie = sf.getString("Set-Cookie", "NA");
+        String cookie = getSession(context);
         return cookie.equals("NA") || cookie.isEmpty();
     }
 
@@ -74,6 +73,12 @@ public class RetrofitClient {
         } else {
             return checkDate(expiry);
         }
+    }
+
+    public static String getSession(Context context) {
+        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        String cookie = sf.getString("Set-Cookie", "NA");
+        return cookie;
     }
 
     public static String getExpiry(Context context) {
