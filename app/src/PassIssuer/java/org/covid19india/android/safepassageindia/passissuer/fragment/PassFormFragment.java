@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.icu.text.DateFormat;
 import android.icu.text.SimpleDateFormat;
@@ -36,6 +37,7 @@ import org.covid19india.android.safepassageindia.RetrofitClient;
 import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.model.Pass;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Objects;
 
@@ -52,14 +54,13 @@ import retrofit2.Retrofit;
  * create an instance of this fragment.
  */
 public class PassFormFragment extends Fragment {
-    private static final String ARG_BITMAP = "bitmap";
+    private static final String ARG_FILENAME = "file_name";
+
     private static final String ARG_ID = "user_id";
     private static final String ARG_PHONE = "user_phoneNumber";
     private static final String TAG = "PassFormFragment";
 
-
-    private Bitmap bitmap;
-    private String userId, phoneNumber, selectedPassType, selectedMedVerification;
+    private String userId, phoneNumber, selectedPassType, selectedMedVerification, fileName;
     private ImageView userImage;
     private View fromLayout, tillLayout;
     private Spinner typeSpinner, medicalSpinner;
@@ -127,17 +128,19 @@ public class PassFormFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param bitmap      Bitmap of User image.
      * @param id          Id of the issuer using this app.
      * @param phoneNumber Phone number of the pass user.
+     * @param fileName    Name of the file containing the user image
      * @return A new instance of fragment PassFormFragment.
      */
-    public static PassFormFragment newInstance(Bitmap bitmap, String id, String phoneNumber) {
+    public static PassFormFragment newInstance(String id, String phoneNumber, String fileName) {
         PassFormFragment fragment = new PassFormFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_BITMAP, bitmap);
+
+        args.putString(ARG_FILENAME, fileName);
         args.putString(ARG_ID, id);
         args.putString(ARG_PHONE, phoneNumber);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -146,7 +149,8 @@ public class PassFormFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            bitmap = getArguments().getParcelable(ARG_BITMAP);
+            fileName = getArguments().getString(ARG_FILENAME);
+
             userId = getArguments().getString(ARG_ID);
             phoneNumber = getArguments().getString(ARG_PHONE);
         }
@@ -501,7 +505,7 @@ public class PassFormFragment extends Fragment {
         medicalSpinner = view.findViewById(R.id.medical_verification);
 
         userImage = view.findViewById(R.id.user_pic);
-        userImage.setImageBitmap(bitmap);
+        userImage.setImageBitmap(getUserImage());
 
         fromDateTime = new DateTime();
         tillDateTime = new DateTime();
@@ -513,5 +517,17 @@ public class PassFormFragment extends Fragment {
 
         //Set phone number in edit text
         ((TextInputEditText) view.findViewById(R.id.phoneEdit)).setText(phoneNumber);
+    }
+
+    private Bitmap getUserImage() {
+        return BitmapFactory.decodeFile(getContext().getCacheDir() + "/SafePassage/" + fileName + ".jpg");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        File file = new File(getContext().getCacheDir() + "/SafePassage/" + fileName + ".jpg");
+        boolean isFileDeleted = file.delete();
+        Log.d(TAG, "File Status : " + isFileDeleted);
     }
 }

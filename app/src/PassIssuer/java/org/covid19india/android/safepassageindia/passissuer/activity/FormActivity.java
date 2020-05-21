@@ -2,8 +2,6 @@ package org.covid19india.android.safepassageindia.passissuer.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -29,8 +27,7 @@ public class FormActivity extends AppCompatActivity {
     private static final String TAG = "FormActivity";
     private FrameLayout frameLayout;
     private Fragment passFormFragment;
-    private String type, userId, phoneNumber;
-    private Bitmap bitmap;
+    private String type, userId, phoneNumber, fileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +48,7 @@ public class FormActivity extends AppCompatActivity {
                 break;
             case "pass":
                 Log.d(TAG, "Pass");
-                passFormFragment = PassFormFragment.newInstance(bitmap, userId, phoneNumber);
+                passFormFragment = PassFormFragment.newInstance(userId, phoneNumber, fileName);
                 loadFragment(passFormFragment);
                 break;
             case "team":
@@ -74,8 +71,7 @@ public class FormActivity extends AppCompatActivity {
         Intent intent = getIntent();
         type = intent.getStringExtra("form_type");
         if (type != null && type.equals("pass")) {
-            byte[] bytes = intent.getByteArrayExtra("image");
-            bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            fileName = intent.getStringExtra("file_name");
             userId = intent.getStringExtra("user_id");
             phoneNumber = intent.getStringExtra("user_phoneNumber");
         }

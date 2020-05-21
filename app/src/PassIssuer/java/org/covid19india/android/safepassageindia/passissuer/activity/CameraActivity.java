@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
 import android.view.MenuItem;
@@ -19,8 +18,9 @@ import android.widget.Toast;
 
 import org.covid19india.android.safepassageindia.R;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,7 +41,8 @@ public class CameraActivity extends AppCompatActivity {
     private static final String TAG = "CameraActivity";
     private int REQUEST_CODE_PERMISSIONS = 10; //arbitrary number, can be changed accordingly
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA"}; //array w/ permissions from manifest
-    private String user_id, user_phone;
+    private String userId, userPhone;
+    private long timeInMillis;
     TextureView textureView;
     ImageButton btnCapture;
 
@@ -61,8 +62,26 @@ public class CameraActivity extends AppCompatActivity {
     private void init() {
         textureView = findViewById(R.id.texture_view);
         btnCapture = findViewById(R.id.btn_capture);
-        user_id = getIntent().getStringExtra("user_id");
-        user_phone = getIntent().getStringExtra("user_phoneNumber");
+        userId = getIntent().getStringExtra("user_id");
+        userPhone = getIntent().getStringExtra("user_phoneNumber");
+    }
+
+    private void uploadImage() {
+        /*TODO
+         *  Add your code in this method
+         *  For user id or user phone number use userId and userPhone respectively
+         *  On upload success call the startFormActivity() method*/
+    }
+
+    private void startFormActivity() {
+        Intent intent = new Intent(CameraActivity.this, FormActivity.class);
+        intent.putExtra("form_type", "pass");
+        intent.putExtra("file_name", timeInMillis + "");
+        intent.putExtra("user_id", userId);
+        intent.putExtra("user_phoneNumber", userPhone);
+
+        startActivity(intent);
+        finish();
     }
 
     private void startCamera() {
@@ -102,15 +121,11 @@ public class CameraActivity extends AppCompatActivity {
         btnCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                File folder = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham");
-//                folder.mkdir();
-//                File file = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham/" + System.currentTimeMillis() + ".jpg");
+                btnCapture.setEnabled(false);
                 File folder = new File(getCacheDir() + "/SafePassage");
                 boolean isFolderCreated = folder.mkdir();
-                long time = System.currentTimeMillis(); //File name
-                File file = new File(getCacheDir() + "/SafePassage/" + time + ".jpg");
-                ((ImageButton) btnCapture).setEnabled(false);
-                //TODO Use any one of the two imgCap.takePicture() method, while commenting the other
+                timeInMillis = System.currentTimeMillis(); //File name
+                final File file = new File(getCacheDir() + "/SafePassage/" + timeInMillis + ".jpg");
                 imgCap.takePicture(new ImageCapture.OnImageCapturedListener() {
                     @Override
                     public void onCaptureSuccess(ImageProxy image, int rotationDegrees) {
@@ -118,21 +133,18 @@ public class CameraActivity extends AppCompatActivity {
                         Bitmap bitmap = textureView.getBitmap();
                         bitmap = getResizedBitmap(bitmap, 500);
 
-                        //Converting to byte array
-                        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bStream);
-                        byte[] byteArray = bStream.toByteArray();
-                        Log.d(TAG, String.valueOf(byteArray.length));
+                        //Storing the bitmap in cache
+                        try {
+                            FileOutputStream outputStream = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                            outputStream.flush();
+                            outputStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
-                        //Starting Form Activity
-                        Intent intent = new Intent(CameraActivity.this, FormActivity.class);
-                        intent.putExtra("form_type", "pass");
-                        intent.putExtra("image", byteArray);
-                        intent.putExtra("user_id", user_id);
-                        intent.putExtra("user_phoneNumber", user_phone);
+                        uploadImage();
 
-                        startActivity(intent);
-                        finish();
                     }
 
                     @Override
@@ -147,8 +159,8 @@ public class CameraActivity extends AppCompatActivity {
                         Toast.makeText(CameraActivity.this, msg, Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(CameraActivity.this, FormActivity.class);
                         intent.putExtra("form_type", "pass");
-                        intent.putExtra("user_id", user_id);
-                        intent.putExtra("user_phoneNumber", user_phone);
+                        intent.putExtra("user_id", userId);
+                        intent.putExtra("user_phoneNumber", userPhone);
                         startActivity(intent);
                         finish();
                     }
