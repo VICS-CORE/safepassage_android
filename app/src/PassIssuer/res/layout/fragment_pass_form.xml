@@ -68,7 +68,7 @@
                     android:background="@drawable/spinner_border">
                     <!-- Pass Type -->
                     <Spinner
-                        android:id="@+id/medical_verification"
+                        android:id="@+id/pass_type"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@android:color/white"
@@ -85,7 +85,7 @@
                     android:background="@drawable/spinner_border">
                     <!-- Pass Type -->
                     <Spinner
-                        android:id="@+id/pass_type"
+                        android:id="@+id/medical_verification"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@android:color/white"
@@ -169,7 +169,7 @@
                 </com.google.android.material.textfield.TextInputLayout>-->
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_people"
+                    android:id="@+id/til_zipCode"
                     style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -182,11 +182,12 @@
                     app:hintTextColor="@android:color/white">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/peopleEdit"
+                        android:id="@+id/zipCodeEdit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="People"
+                        android:hint="Zip Code"
                         android:inputType="number"
+                        android:maxLength="6"
                         android:textColor="@android:color/white"
                         android:textCursorDrawable="@null" />
                 </com.google.android.material.textfield.TextInputLayout>

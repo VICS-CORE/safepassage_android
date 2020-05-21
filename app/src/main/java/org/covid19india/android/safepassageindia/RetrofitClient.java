@@ -30,6 +30,18 @@ public class RetrofitClient {
         edit.apply();
     }
 
+    public static void storeUserId(Context context, String content) {
+        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sf.edit();
+        edit.putString("user_id", content);
+        edit.apply();
+    }
+
+    public static String getUserId(Context context) {
+        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        return sf.getString("user_id", "NA");
+    }
+
     private static String getDate(String cookie) {
         Dictionary<String, Integer> months = new Hashtable();
         months.put("January", 1);

@@ -110,7 +110,7 @@ public class CameraActivity extends AppCompatActivity {
                 long time = System.currentTimeMillis(); //File name
                 File file = new File(getCacheDir() + "/SafePassage/" + time + ".jpg");
                 ((ImageButton) btnCapture).setEnabled(false);
-                //TODO Use any one of the two imgCap.takePicture method, while commenting other
+                //TODO Use any one of the two imgCap.takePicture() method, while commenting the other
                 imgCap.takePicture(new ImageCapture.OnImageCapturedListener() {
                     @Override
                     public void onCaptureSuccess(ImageProxy image, int rotationDegrees) {

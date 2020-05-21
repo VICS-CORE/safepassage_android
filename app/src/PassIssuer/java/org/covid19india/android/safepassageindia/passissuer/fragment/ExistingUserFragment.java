@@ -92,7 +92,7 @@ public class ExistingUserFragment extends Fragment {
                             if (response.body() != null && response.body().getUsers().size() == 1) {
                                 user = response.body().getUsers().get(0);
                                 Intent intent = new Intent(getContext(), CameraActivity.class);
-                                intent.putExtra("user_id", user.getUser_id());
+                                intent.putExtra("user_id", user.getUser_id() + "");
                                 intent.putExtra("user_phoneNumber", user.getUser_phoneNumber());
                                 startActivity(intent);
                                 Objects.requireNonNull(getActivity()).finish();

@@ -13,6 +13,7 @@ import org.covid19india.android.safepassageindia.R;
 import org.covid19india.android.safepassageindia.RetrofitClient;
 import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.activity.LoginActivity;
+import org.covid19india.android.safepassageindia.model.UserList;
 import org.covid19india.android.safepassageindia.passissuer.adapter.SectionsPagerAdapter;
 import org.covid19india.android.safepassageindia.passissuer.fragment.PassesFragment;
 import org.covid19india.android.safepassageindia.passissuer.fragment.TeamsFragment;
@@ -80,6 +81,7 @@ public class MenuActivity extends AppCompatActivity {
                     if (response.isSuccessful() && response.code() == 200) {
                         List<String> message = response.body();
                         RetrofitClient.storeCookie(getApplicationContext(), response.headers().get("Set-Cookie"));
+                        callUserApi();
                         HttpCookie cookie = new HttpCookie("hi", "hello");
                         String value = cookie.getValue();
                         String name = cookie.getName();
@@ -112,6 +114,28 @@ public class MenuActivity extends AppCompatActivity {
                 Log.d(TAG, "Session already present\nExpires on " + RetrofitClient.getExpiry(MenuActivity.this));
             }
         }
+    }
+
+    private void callUserApi() {
+        Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
+        ServerApi serverApi = retrofit.create(ServerApi.class);
+        serverApi.getUsers(RetrofitClient.getSession(getApplicationContext()), "json", FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber().substring(3), "2")
+                .enqueue(new Callback<UserList>() {
+                    @Override
+                    public void onResponse(Call<UserList> call, Response<UserList> response) {
+                        if (response.isSuccessful() && response.code() / 100 == 2) {
+                            if (response.body() != null && response.body().getUsers().size() == 1) {
+                                String userId = response.body().getUsers().get(0).getUser_id() + "";
+                                RetrofitClient.storeUserId(getApplicationContext(), userId);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserList> call, Throwable t) {
+
+                    }
+                });
     }
 
     private void setViewPager() {
