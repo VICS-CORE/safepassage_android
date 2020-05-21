@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -36,6 +37,7 @@ import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.model.Pass;
 
 import java.util.Date;
+import java.util.Objects;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -65,6 +67,7 @@ public class PassFormFragment extends Fragment {
     private TextInputEditText tillDateEdit, tillTimeEdit;
     private TextInputEditText reasonEdit, zipCodeEdit, areaEdit;
     private TextInputLayout tilZipCode, tilArea;
+    private ProgressBar progressBar;
     private Button createButton;
     private DateTime fromDateTime, tillDateTime;
     private static final String[] types = {"Pass Type", "Permanent pass", "One Time pass", "Temporary pass"}, medicalVerification = {"Medical Verification", "Yes", "No"};
@@ -167,6 +170,7 @@ public class PassFormFragment extends Fragment {
             public void onClick(View view) {
                 if (validateForm()) {
                     Pass pass = createPassObject();
+                    progressBar.setVisibility(View.VISIBLE);
                     submitPass(pass);
                 }
             }
@@ -243,6 +247,7 @@ public class PassFormFragment extends Fragment {
                 .enqueue(new Callback<LinkedTreeMap<String, String>>() {
                     @Override
                     public void onResponse(Call<LinkedTreeMap<String, String>> call, Response<LinkedTreeMap<String, String>> response) {
+                        progressBar.setVisibility(View.GONE);
                         if (response.isSuccessful() && response.code() / 100 == 2) {
                             Log.d(TAG, "submitPass successful, code = " + response.code());
                             LinkedTreeMap<String, String> task = response.body();
@@ -250,8 +255,8 @@ public class PassFormFragment extends Fragment {
                             if (msg != null) {
                                 Log.d(TAG, msg);
                             }
-                            getActivity().finish();
                             Toast.makeText(getContext(), "Pass Created", Toast.LENGTH_SHORT).show();
+                            Objects.requireNonNull(getActivity()).finish();
                         } else {
                             Log.d(TAG, "submitPass not successful, code = " + response.code());
                         }
@@ -259,6 +264,7 @@ public class PassFormFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<LinkedTreeMap<String, String>> call, Throwable t) {
+                        progressBar.setVisibility(View.GONE);
                         Log.d(TAG, "Server cannot be accessed");
                         t.printStackTrace();
                     }
@@ -502,6 +508,8 @@ public class PassFormFragment extends Fragment {
 
         tilZipCode = view.findViewById(R.id.til_zipCode);
         tilArea = view.findViewById(R.id.til_area);
+
+        progressBar = view.findViewById(R.id.loading_progress);
 
         //Set phone number in edit text
         ((TextInputEditText) view.findViewById(R.id.phoneEdit)).setText(phoneNumber);

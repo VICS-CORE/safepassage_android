@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -39,6 +40,7 @@ public class ExistingUserFragment extends Fragment {
     private TextInputEditText phoneText;
     private Button verifyButton;
     private User user;
+    private ProgressBar progressBar;
 
     public ExistingUserFragment() {
         // Required empty public constructor
@@ -72,6 +74,7 @@ public class ExistingUserFragment extends Fragment {
             public void onClick(View view) {
                 view.setEnabled(false);
                 if (validate()) {
+                    progressBar.setVisibility(View.VISIBLE);
                     verifyUser();
                 } else {
                     view.setEnabled(true);
@@ -97,6 +100,7 @@ public class ExistingUserFragment extends Fragment {
                                 startActivity(intent);
                                 Objects.requireNonNull(getActivity()).finish();
                             } else {
+                                progressBar.setVisibility(View.GONE);
                                 Log.d(TAG, "No user found");
                                 Intent intent = new Intent(getContext(), FormActivity.class);
                                 intent.putExtra("form_type", "new_user");
@@ -108,6 +112,7 @@ public class ExistingUserFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<UserList> call, Throwable t) {
+                        progressBar.setVisibility(View.GONE);
                         Log.d(TAG, "Connection Failure");
                         Toast.makeText(getContext(), "Unable to connect to server", Toast.LENGTH_SHORT).show();
                     }
@@ -132,5 +137,6 @@ public class ExistingUserFragment extends Fragment {
         verifyButton.setBackground(ContextCompat.getDrawable(view.getContext(), R.drawable.blue_button));
 
         phoneText = view.findViewById(R.id.phoneEdit);
+        progressBar = view.findViewById(R.id.loading_progress);
     }
 }
