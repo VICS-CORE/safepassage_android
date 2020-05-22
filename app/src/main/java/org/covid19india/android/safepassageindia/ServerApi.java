@@ -2,7 +2,6 @@ package org.covid19india.android.safepassageindia;
 
 import com.google.gson.internal.LinkedTreeMap;
 
-import org.covid19india.android.safepassageindia.model.Pass;
 import org.covid19india.android.safepassageindia.model.PassList;
 import org.covid19india.android.safepassageindia.model.UserList;
 import org.covid19india.android.safepassageindia.model.UserPassList;
@@ -20,15 +19,11 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ServerApi {
-    public class EnclosedPass {
-        private Pass pass;
-
-        public EnclosedPass(Pass pass) {
-            this.pass = pass;
-        }
-    }
 
     String BASE_URL = "http://34.69.21.192";
+
+    @POST("/user/")
+    Call<LinkedTreeMap<String, String>> createUser(@Header("Cookie") String session, @Body Object user);
 
     @GET("/user/")
     Call<UserList> getUsers(@Header("Cookie") String session, @Query("format") String format, @Query("user_phonenumber") String number, @Query("usertype") String type);
@@ -44,5 +39,5 @@ public interface ServerApi {
     Call<List<String>> sessionLogin(@Part("idToken") RequestBody idToken);
 
     @POST("/pass/")
-    Call<LinkedTreeMap<String, String>> submitPass(@Header("Cookie") String session, @Body EnclosedPass pass);
+    Call<LinkedTreeMap<String, String>> submitPass(@Header("Cookie") String session, @Body Object pass);
 }

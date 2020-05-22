@@ -60,6 +60,14 @@ public class PassFormFragment extends Fragment {
     private static final String ARG_PHONE = "user_phoneNumber";
     private static final String TAG = "PassFormFragment";
 
+    private static class EnclosedPass {
+        private Pass pass;
+
+        public EnclosedPass(Pass pass) {
+            this.pass = pass;
+        }
+    }
+
     private String userId, phoneNumber, selectedPassType, selectedMedVerification, fileName;
     private ImageView userImage;
     private View fromLayout, tillLayout;
@@ -68,7 +76,7 @@ public class PassFormFragment extends Fragment {
     private TextInputEditText tillDateEdit, tillTimeEdit;
     private TextInputEditText reasonEdit, zipCodeEdit, areaEdit;
     private TextInputLayout tilZipCode, tilArea;
-    private ProgressBar progressBar;
+    private ProgressBar loadingBar;
     private Button createButton;
     private DateTime fromDateTime, tillDateTime;
     private static final String[] types = {"Pass Type", "Permanent pass", "One Time pass", "Temporary pass"}, medicalVerification = {"Medical Verification", "Yes", "No"};
@@ -174,7 +182,7 @@ public class PassFormFragment extends Fragment {
             public void onClick(View view) {
                 if (validateForm()) {
                     Pass pass = createPassObject();
-                    progressBar.setVisibility(View.VISIBLE);
+                    loadingBar.setVisibility(View.VISIBLE);
                     submitPass(pass);
                 }
             }
@@ -244,14 +252,14 @@ public class PassFormFragment extends Fragment {
     }
 
     private void submitPass(Pass pass) {
-        ServerApi.EnclosedPass enclosedPass = new ServerApi.EnclosedPass(pass);
+        EnclosedPass enclosedPass = new EnclosedPass(pass);
         Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
         ServerApi serverApi = retrofit.create(ServerApi.class);
         serverApi.submitPass(RetrofitClient.getSession(getContext()), enclosedPass)
                 .enqueue(new Callback<LinkedTreeMap<String, String>>() {
                     @Override
                     public void onResponse(Call<LinkedTreeMap<String, String>> call, Response<LinkedTreeMap<String, String>> response) {
-                        progressBar.setVisibility(View.GONE);
+                        loadingBar.setVisibility(View.GONE);
                         if (response.isSuccessful() && response.code() / 100 == 2) {
                             Log.d(TAG, "submitPass successful, code = " + response.code());
                             LinkedTreeMap<String, String> task = response.body();
@@ -268,7 +276,7 @@ public class PassFormFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<LinkedTreeMap<String, String>> call, Throwable t) {
-                        progressBar.setVisibility(View.GONE);
+                        loadingBar.setVisibility(View.GONE);
                         Log.d(TAG, "Server cannot be accessed");
                         t.printStackTrace();
                     }
@@ -513,7 +521,7 @@ public class PassFormFragment extends Fragment {
         tilZipCode = view.findViewById(R.id.til_zipCode);
         tilArea = view.findViewById(R.id.til_area);
 
-        progressBar = view.findViewById(R.id.loading_progress);
+        loadingBar = view.findViewById(R.id.loading_progress);
 
         //Set phone number in edit text
         ((TextInputEditText) view.findViewById(R.id.phoneEdit)).setText(phoneNumber);
