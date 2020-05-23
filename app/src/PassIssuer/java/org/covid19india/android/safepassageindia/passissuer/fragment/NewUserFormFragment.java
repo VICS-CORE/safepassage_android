@@ -24,7 +24,6 @@ import org.covid19india.android.safepassageindia.RetrofitClient;
 import org.covid19india.android.safepassageindia.ServerApi;
 import org.covid19india.android.safepassageindia.model.User;
 import org.covid19india.android.safepassageindia.passissuer.activity.CameraActivity;
-import org.covid19india.android.safepassageindia.passissuer.activity.FormActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +73,7 @@ public class NewUserFormFragment extends Fragment {
     private RadioGroup radioGroup;
     private String gender;
     private ProgressBar loadingBar;
+    private int createdUserId;
 
     public NewUserFormFragment() {
         // Required empty public constructor
@@ -151,7 +151,16 @@ public class NewUserFormFragment extends Fragment {
                             if (msg != null) {
                                 Log.d(TAG, msg);
                             }
-                            Toast.makeText(getContext(), "User Created", Toast.LENGTH_SHORT).show();
+                            try {
+                                String strId = msg.substring(msg.indexOf("user_id"));
+                                strId = strId.substring(strId.indexOf('\'') + 1, strId.lastIndexOf('\''));
+                                createdUserId = Integer.parseInt(strId);
+                                Toast.makeText(getContext(), "User Created", Toast.LENGTH_SHORT).show();
+                            } catch (NumberFormatException e) {
+                                e.printStackTrace();
+                                Log.d(TAG, "Response message is not valid or have different syntax");
+                                Toast.makeText(getContext(), "Response message is not valid or have different syntax", Toast.LENGTH_SHORT).show();
+                            }
                             callAlertDialog();
                         } else {
                             Log.d(TAG, "createUser not successful, code = " + response.code());
@@ -286,9 +295,7 @@ public class NewUserFormFragment extends Fragment {
                 .setPositiveButton("Continue to pass creation", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //TODO should decide which method to call
-//                        startCameraActivity();
-                        startExistingUserFragment();
+                        startCameraActivity();
                     }
                 })
                 .setNegativeButton("Home page", new DialogInterface.OnClickListener() {
@@ -305,16 +312,8 @@ public class NewUserFormFragment extends Fragment {
 
     private void startCameraActivity() {
         Intent intent = new Intent(getActivity().getApplicationContext(), CameraActivity.class);
-        //TODO add user id and phone number
-//        intent.putExtra("user_id",);
+        intent.putExtra("user_id", createdUserId);
         intent.putExtra("user_phoneNumber", phoneText.getText().toString().trim());
-        startActivity(intent);
-        getActivity().finish();
-    }
-
-    private void startExistingUserFragment() {
-        Intent intent = new Intent(getActivity().getApplicationContext(), FormActivity.class);
-        intent.putExtra("form_type", "existing_user");
         startActivity(intent);
         getActivity().finish();
     }
