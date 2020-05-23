@@ -66,13 +66,6 @@ public class CameraActivity extends AppCompatActivity {
         userPhone = getIntent().getStringExtra("user_phoneNumber");
     }
 
-    private void uploadImage() {
-        /*TODO
-         *  Add your code in this method
-         *  For user id or user phone number use userId and userPhone respectively
-         *  On upload success call the startFormActivity() method*/
-    }
-
     private void startFormActivity() {
         Intent intent = new Intent(CameraActivity.this, FormActivity.class);
         intent.putExtra("form_type", "pass");
@@ -142,9 +135,7 @@ public class CameraActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
-                        uploadImage();
-
+                        startFormActivity();
                     }
 
                     @Override

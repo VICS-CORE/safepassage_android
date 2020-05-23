@@ -252,6 +252,10 @@ public class PassFormFragment extends Fragment {
     }
 
     private void submitPass(Pass pass) {
+        /*Todo
+         *  Modify this method to upload both image and pass
+         *  The fileName variable contains the name of the image file
+         *  Path of the file is - getContext().getCacheDir() + "/SafePassage/" + fileName + ".jpg"*/
         EnclosedPass enclosedPass = new EnclosedPass(pass);
         Retrofit retrofit = RetrofitClient.getClient(ServerApi.BASE_URL);
         ServerApi serverApi = retrofit.create(ServerApi.class);
