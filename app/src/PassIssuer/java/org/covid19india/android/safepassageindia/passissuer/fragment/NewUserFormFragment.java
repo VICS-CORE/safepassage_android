@@ -156,14 +156,15 @@ public class NewUserFormFragment extends Fragment {
                                 strId = strId.substring(strId.indexOf('\'') + 1, strId.lastIndexOf('\''));
                                 createdUserId = Integer.parseInt(strId);
                                 Toast.makeText(getContext(), "User Created", Toast.LENGTH_SHORT).show();
+                                callAlertDialog();
                             } catch (NumberFormatException e) {
                                 e.printStackTrace();
                                 Log.d(TAG, "Response message is not valid or have different syntax");
-                                Toast.makeText(getContext(), "Response message is not valid or have different syntax", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Pass Created but response message is not valid", Toast.LENGTH_SHORT).show();
                             }
-                            callAlertDialog();
                         } else {
                             Log.d(TAG, "createUser not successful, code = " + response.code());
+                            Toast.makeText(getContext(), "User not created", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -171,6 +172,7 @@ public class NewUserFormFragment extends Fragment {
                     public void onFailure(Call<LinkedTreeMap<String, String>> call, Throwable t) {
                         loadingBar.setVisibility(View.GONE);
                         Log.d(TAG, "Server cannot be accessed");
+                        Toast.makeText(getContext(), "Unable to connect to server", Toast.LENGTH_SHORT).show();
                         t.printStackTrace();
                     }
                 });
@@ -181,6 +183,8 @@ public class NewUserFormFragment extends Fragment {
         tilLastName.setError(null);
         tilPhone.setError(null);
         tilAddress1.setError(null);
+        tilAddress2.setError(null);
+        tilAddress3.setError(null);
         tilCity.setError(null);
         tilState.setError(null);
         tilCountry.setError(null);
@@ -207,6 +211,14 @@ public class NewUserFormFragment extends Fragment {
         } else if (address1Text.getText().toString().trim().isEmpty()) {
             tilAddress1.setError("Cannot be blank");
             tilAddress1.requestFocus();
+            return false;
+        } else if (address2Text.getText().toString().trim().isEmpty()) {
+            tilAddress2.setError("Cannot be blank");
+            tilAddress2.requestFocus();
+            return false;
+        } else if (address3Text.getText().toString().trim().isEmpty()) {
+            tilAddress3.setError("Cannot be blank");
+            tilAddress3.requestFocus();
             return false;
         } else if (!isCountryValid()) {
             tilCountry.setError("Invalid");

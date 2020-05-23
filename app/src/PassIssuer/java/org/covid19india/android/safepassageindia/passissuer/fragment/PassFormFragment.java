@@ -75,7 +75,7 @@ public class PassFormFragment extends Fragment {
     private TextInputEditText fromDateEdit, fromTimeEdit;
     private TextInputEditText tillDateEdit, tillTimeEdit;
     private TextInputEditText reasonEdit, zipCodeEdit, areaEdit;
-    private TextInputLayout tilZipCode, tilArea;
+    private TextInputLayout tilReason, tilZipCode, tilArea;
     private ProgressBar loadingBar;
     private Button createButton;
     private DateTime fromDateTime, tillDateTime;
@@ -275,6 +275,7 @@ public class PassFormFragment extends Fragment {
                             Objects.requireNonNull(getActivity()).finish();
                         } else {
                             Log.d(TAG, "submitPass not successful, code = " + response.code());
+                            Toast.makeText(getContext(), "Pass Not Created", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -288,25 +289,35 @@ public class PassFormFragment extends Fragment {
     }
 
     private boolean validateForm() {
+        tilReason.setError(null);
         tilZipCode.setError(null);
         tilArea.setError(null);
-        if (typeSpinner.getSelectedItemPosition() != 0 && medicalSpinner.getSelectedItemPosition() != 0 &&
-                !fromDateEdit.getText().toString().trim().isEmpty() && !fromTimeEdit.getText().toString().trim().isEmpty()
-                && !tillDateEdit.getText().toString().trim().isEmpty() && !tillTimeEdit.getText().toString().isEmpty() &&
-                !zipCodeEdit.getText().toString().trim().isEmpty() && !areaEdit.getText().toString().trim().isEmpty()) {
-            return true;
-        } else if (typeSpinner.getSelectedItemPosition() == 0) {
+        if (typeSpinner.getSelectedItemPosition() == 0) {
             typeSpinner.performClick();
+            return false;
         } else if (medicalSpinner.getSelectedItemPosition() == 0) {
             medicalSpinner.performClick();
+            return false;
+        } else if (reasonEdit.getText().toString().trim().isEmpty()) {
+            tilReason.setError("Cannot be blank");
+            tilReason.requestFocus();
+            return false;
         } else if (fromDateEdit.getText().toString().trim().isEmpty()) {
             ((TextInputLayout) fromLayout.findViewById(R.id.date_picker)).requestFocus();
+            Toast.makeText(getContext(), "Starting date is required", Toast.LENGTH_SHORT).show();
+            return false;
         } else if (fromTimeEdit.getText().toString().trim().isEmpty()) {
             ((TextInputLayout) fromLayout.findViewById(R.id.time_picker)).requestFocus();
+            Toast.makeText(getContext(), "Starting time is required", Toast.LENGTH_SHORT).show();
+            return false;
         } else if (tillDateEdit.getText().toString().trim().isEmpty()) {
             ((TextInputLayout) tillLayout.findViewById(R.id.date_picker)).requestFocus();
+            Toast.makeText(getContext(), "Ending date is required", Toast.LENGTH_SHORT).show();
+            return false;
         } else if (tillTimeEdit.getText().toString().trim().isEmpty()) {
             ((TextInputLayout) tillLayout.findViewById(R.id.time_picker)).requestFocus();
+            Toast.makeText(getContext(), "Starting time is required", Toast.LENGTH_SHORT).show();
+            return false;
         } else if (zipCodeEdit.getText().toString().trim().length() != 6) {
             if (zipCodeEdit.getText().toString().trim().isEmpty()) {
                 tilZipCode.setError("Zip code is mandatory");
@@ -314,11 +325,13 @@ public class PassFormFragment extends Fragment {
                 tilZipCode.setError("Invalid zip code");
             }
             tilZipCode.requestFocus();
+            return false;
         } else if (areaEdit.getText().toString().trim().isEmpty()) {
             tilArea.setError("Area is mandatory");
             tilArea.requestFocus();
+            return false;
         }
-        return false;
+        return true;
     }
 
     private Pass createPassObject() {
@@ -510,8 +523,13 @@ public class PassFormFragment extends Fragment {
         tillTimeEdit = tillLayout.findViewById(R.id.timeEdit);
 
         reasonEdit = view.findViewById(R.id.reasonEdit);
+        tilReason = view.findViewById(R.id.til_reason);
+
         zipCodeEdit = view.findViewById(R.id.zipCodeEdit);
+        tilZipCode = view.findViewById(R.id.til_zipCode);
+
         areaEdit = view.findViewById(R.id.areaEdit);
+        tilArea = view.findViewById(R.id.til_area);
 
         typeSpinner = view.findViewById(R.id.pass_type);
         medicalSpinner = view.findViewById(R.id.medical_verification);
@@ -521,9 +539,6 @@ public class PassFormFragment extends Fragment {
 
         fromDateTime = new DateTime();
         tillDateTime = new DateTime();
-
-        tilZipCode = view.findViewById(R.id.til_zipCode);
-        tilArea = view.findViewById(R.id.til_area);
 
         loadingBar = view.findViewById(R.id.loading_progress);
 

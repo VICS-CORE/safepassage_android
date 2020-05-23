@@ -54,8 +54,6 @@ public class CameraActivity extends AppCompatActivity {
         init();
         if (allPermissionsGranted()) {
             startCamera(); //start camera if permission has been granted by user
-        } else {
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
     }
 

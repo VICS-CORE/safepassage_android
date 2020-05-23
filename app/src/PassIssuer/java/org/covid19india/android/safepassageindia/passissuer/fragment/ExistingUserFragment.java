@@ -106,6 +106,7 @@ public class ExistingUserFragment extends Fragment {
                                 intent.putExtra("form_type", "new_user");
                                 startActivity(intent);
                                 Objects.requireNonNull(getActivity()).finish();
+                                Toast.makeText(getContext(), "No user found", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
