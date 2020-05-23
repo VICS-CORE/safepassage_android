@@ -6,17 +6,17 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/btn_team"
+        android:id="@+id/btn_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:background="@drawable/blue_button"
         android:gravity="center"
-        android:text="@string/team"
+        android:text="@string/button_1"
         android:textColor="@android:color/white" />
 
     <Button
-        android:id="@+id/btn_member"
+        android:id="@+id/btn_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -24,6 +24,6 @@
         android:layout_marginBottom="20dp"
         android:background="@drawable/blue_button"
         android:gravity="center"
-        android:text="@string/member"
+        android:text="@string/button_2"
         android:textColor="@android:color/white" />
 </LinearLayout>

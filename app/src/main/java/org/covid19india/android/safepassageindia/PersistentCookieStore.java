@@ -20,7 +20,8 @@ public class PersistentCookieStore implements CookieStore {
 //        String p=sf.getString("Set-Cookie","NA");
         Map<String, ?> allEntries = sf.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-
+            HttpCookie httpCookie = new HttpCookie(entry.getKey(), entry.getValue().toString());
+            add(URI.create(ServerApi.BASE_URL), httpCookie);
             Log.d("map values", entry.getKey() + ": " + entry.getValue().toString());
         }
     }
@@ -53,5 +54,14 @@ public class PersistentCookieStore implements CookieStore {
     @Override
     public boolean removeAll() {
         return store.removeAll();
+    }
+
+    public HttpCookie getCookie(URI uri, String key) {
+        List<HttpCookie> cookies = store.get(uri);
+        for (HttpCookie cookie : cookies) {
+            if (cookie.getName().equals(key))
+                return cookie;
+        }
+        return null;
     }
 }

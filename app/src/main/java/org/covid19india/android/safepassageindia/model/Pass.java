@@ -38,6 +38,14 @@ public class Pass implements Parcelable {
     public Pass() {
     }
 
+    public String getPass_updatedOn() {
+        return pass_updatedOn;
+    }
+
+    public void setPass_updatedOn(String pass_updatedOn) {
+        this.pass_updatedOn = pass_updatedOn;
+    }
+
     public Integer getPass_id() {
         return pass_id;
     }

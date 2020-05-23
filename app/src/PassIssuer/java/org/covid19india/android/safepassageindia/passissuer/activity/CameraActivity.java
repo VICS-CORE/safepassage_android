@@ -1,11 +1,11 @@
 package org.covid19india.android.safepassageindia.passissuer.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
 import android.view.MenuItem;
@@ -18,10 +18,13 @@ import android.widget.Toast;
 
 import org.covid19india.android.safepassageindia.R;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraX;
 import androidx.camera.core.ImageAnalysis;
@@ -37,7 +40,9 @@ import androidx.core.content.ContextCompat;
 public class CameraActivity extends AppCompatActivity {
     private static final String TAG = "CameraActivity";
     private int REQUEST_CODE_PERMISSIONS = 10; //arbitrary number, can be changed accordingly
-    private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"}; //array w/ permissions from manifest
+    private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA"}; //array w/ permissions from manifest
+    private String userId, userPhone;
+    private long timeInMillis;
     TextureView textureView;
     ImageButton btnCapture;
 
@@ -46,13 +51,30 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        textureView = findViewById(R.id.texture_view);
-        btnCapture = findViewById(R.id.btn_capture);
+        init();
         if (allPermissionsGranted()) {
             startCamera(); //start camera if permission has been granted by user
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
+    }
+
+    private void init() {
+        textureView = findViewById(R.id.texture_view);
+        btnCapture = findViewById(R.id.btn_capture);
+        userId = getIntent().getStringExtra("user_id");
+        userPhone = getIntent().getStringExtra("user_phoneNumber");
+    }
+
+    private void startFormActivity() {
+        Intent intent = new Intent(CameraActivity.this, FormActivity.class);
+        intent.putExtra("form_type", "pass");
+        intent.putExtra("file_name", timeInMillis + "");
+        intent.putExtra("user_id", userId);
+        intent.putExtra("user_phoneNumber", userPhone);
+
+        startActivity(intent);
+        finish();
     }
 
     private void startCamera() {
@@ -92,10 +114,11 @@ public class CameraActivity extends AppCompatActivity {
         btnCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                File folder = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham");
-//                folder.mkdir();
-//                File file = new File(Environment.getExternalStorageDirectory() + "/cameraxgoutham/" + System.currentTimeMillis() + ".jpg");
-                ((ImageButton) btnCapture).setEnabled(false);
+                btnCapture.setEnabled(false);
+                File folder = new File(getCacheDir() + "/SafePassage");
+                boolean isFolderCreated = folder.mkdir();
+                timeInMillis = System.currentTimeMillis(); //File name
+                final File file = new File(getCacheDir() + "/SafePassage/" + timeInMillis + ".jpg");
                 imgCap.takePicture(new ImageCapture.OnImageCapturedListener() {
                     @Override
                     public void onCaptureSuccess(ImageProxy image, int rotationDegrees) {
@@ -103,17 +126,16 @@ public class CameraActivity extends AppCompatActivity {
                         Bitmap bitmap = textureView.getBitmap();
                         bitmap = getResizedBitmap(bitmap, 500);
 
-                        //Converting to byte array
-                        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bStream);
-                        byte[] byteArray = bStream.toByteArray();
-                        Log.d(TAG, String.valueOf(byteArray.length));
-
-                        //Starting Form Activity
-                        Intent intent = new Intent(CameraActivity.this, FormActivity.class);
-                        intent.putExtra("form_type", "pass");
-                        intent.putExtra("image", byteArray);
-                        startActivity(intent);
+                        //Storing the bitmap in cache
+                        try {
+                            FileOutputStream outputStream = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                            outputStream.flush();
+                            outputStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        startFormActivity();
                     }
 
                     @Override
@@ -125,11 +147,13 @@ public class CameraActivity extends AppCompatActivity {
                     @Override
                     public void onImageSaved(@NonNull File file) {
                         String msg = "Photo capture succeeded: " + file.getAbsolutePath();
-//                        ImageUploader uploader = new ImageUploader();
-//                        uploader.context = getApplicationContext();
-//                        uploader.initRetrofitClient();
-//                        uploader.multipartImageUpload(file.getAbsolutePath());
-                        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+                        Toast.makeText(CameraActivity.this, msg, Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(CameraActivity.this, FormActivity.class);
+                        intent.putExtra("form_type", "pass");
+                        intent.putExtra("user_id", userId);
+                        intent.putExtra("user_phoneNumber", userPhone);
+                        startActivity(intent);
+                        finish();
                     }
 
                     @Override
@@ -253,9 +277,30 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle)
+                .setTitle("Do you want to Cancel?")
+                .setMessage("You have come a long way. Are you sure you want this?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            this.onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

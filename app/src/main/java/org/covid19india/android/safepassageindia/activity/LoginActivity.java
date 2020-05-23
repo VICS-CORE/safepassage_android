@@ -156,17 +156,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         FirebaseApp.initializeApp(LoginActivity.this);
-        mAuth = FirebaseAuth.getInstance();
-        editText = findViewById(R.id.phoneEdit);
-        relativeLayout = findViewById(R.id.relative_otp);
-        button = findViewById(R.id.sendButton);
-        editText.addTextChangedListener(phoneWatcher);
-        otpEdit = findViewById(R.id.otpEdit);
-        otpEdit.addTextChangedListener(otpWatcher);
-        verifyButton = findViewById(R.id.verifyButton);
-        sendProgress = findViewById(R.id.sendProgress);
-        verifyProgress = findViewById(R.id.verifyProgress);
-        layout = findViewById(R.id.parent_layout);
+        init();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -197,6 +187,20 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void init() {
+        mAuth = FirebaseAuth.getInstance();
+        editText = findViewById(R.id.phoneEdit);
+        relativeLayout = findViewById(R.id.relative_otp);
+        button = findViewById(R.id.sendButton);
+        editText.addTextChangedListener(phoneWatcher);
+        otpEdit = findViewById(R.id.otpEdit);
+        otpEdit.addTextChangedListener(otpWatcher);
+        verifyButton = findViewById(R.id.verifyButton);
+        sendProgress = findViewById(R.id.sendProgress);
+        verifyProgress = findViewById(R.id.verifyProgress);
+        layout = findViewById(R.id.parent_layout);
     }
 
     private void startPhoneNumberVerification(String phoneNumber) {

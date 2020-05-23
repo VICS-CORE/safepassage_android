@@ -30,6 +30,18 @@ public class RetrofitClient {
         edit.apply();
     }
 
+    public static void storeUserId(Context context, String content) {
+        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sf.edit();
+        edit.putString("user_id", content);
+        edit.apply();
+    }
+
+    public static String getUserId(Context context) {
+        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        return sf.getString("user_id", "NA");
+    }
+
     private static String getDate(String cookie) {
         Dictionary<String, Integer> months = new Hashtable();
         months.put("January", 1);
@@ -62,19 +74,28 @@ public class RetrofitClient {
     }
 
     public static boolean isEmpty(Context context) {
-        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
-        String cookie = sf.getString("Set-Cookie", "NA");
+        String cookie = getSession(context);
         return cookie.equals("NA") || cookie.isEmpty();
     }
 
     public static boolean isExpired(Context context) {
-        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
-        String expiry = sf.getString("Expiry", "NA");
+        String expiry = getExpiry(context);
         if (expiry.equals("NA")) {
             return false;
         } else {
             return checkDate(expiry);
         }
+    }
+
+    public static String getSession(Context context) {
+        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        String cookie = sf.getString("Set-Cookie", "NA");
+        return cookie;
+    }
+
+    public static String getExpiry(Context context) {
+        SharedPreferences sf = context.getSharedPreferences("session_cookie", Context.MODE_PRIVATE);
+        return sf.getString("Expiry", "NA");
     }
 
     private static boolean checkDate(String date) {
