@@ -19,7 +19,6 @@ import org.covid19india.android.safepassageindia.passissuer.fragment.PassesFragm
 import org.covid19india.android.safepassageindia.passissuer.fragment.TeamsFragment;
 import org.json.JSONObject;
 
-import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,13 +79,12 @@ public class MenuActivity extends AppCompatActivity {
                     Log.d(TAG, "Response Code: " + response.code());
                     if (response.isSuccessful() && response.code() == 200) {
                         List<String> message = response.body();
+                        Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie") + "\nMessage: " + message.get(0));
                         RetrofitClient.storeCookie(getApplicationContext(), response.headers().get("Set-Cookie"));
                         callUserApi();
-                        HttpCookie cookie = new HttpCookie("hi", "hello");
-                        String value = cookie.getValue();
-                        String name = cookie.getName();
-
-                        Log.d(TAG, "Cookie: " + response.headers().get("Set-Cookie") + "\nMessage: " + message.get(0));
+//                        HttpCookie cookie = new HttpCookie("hi", "hello");
+//                        String value = cookie.getValue();
+//                        String name = cookie.getName();
                     } else {
                         try {
                             JSONObject jObjError = new JSONObject(response.errorBody().string());
